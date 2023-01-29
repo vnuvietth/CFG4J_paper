@@ -1,4 +1,4 @@
-# gen-test
+# CFG4J Tool
 
 Ref: Software Engineering Laboratory - RD320
 
