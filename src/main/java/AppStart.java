@@ -1,4 +1,5 @@
 import core.cfg.CfgBlock;
+import core.cfg.CfgEndBlockNode;
 import core.cfg.CfgNode;
 import core.parser.ASTHelper;
 import core.parser.ProjectParser;
@@ -35,7 +36,7 @@ public class AppStart {
         System.out.println("count = " + funcAstNodeList.size());
 
         for (ASTNode func : funcAstNodeList) {
-            if (((MethodDeclaration)func).getName().getIdentifier().equals("checkLeafYear"))
+            if (((MethodDeclaration)func).getName().getIdentifier().equals("SelectionSort"))
             {
 //                System.out.println("func = " + ((MethodDeclaration)func).getName());
 //                System.out.println("parameters.size() = " + ((MethodDeclaration)func).parameters().size());
@@ -65,7 +66,7 @@ public class AppStart {
                 CfgNode cfgBeginCfgNode = new CfgNode();
                 cfgBeginCfgNode.setIsBeginCfgNode(true);
 
-                CfgNode cfgEndCfgNode = new CfgNode();
+                CfgEndBlockNode cfgEndCfgNode = new CfgEndBlockNode();
                 cfgEndCfgNode.setIsEndCfgNode(true);
 
                 CfgNode block = new CfgBlock();

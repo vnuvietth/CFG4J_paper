@@ -10,6 +10,7 @@ import org.eclipse.jdt.internal.compiler.ast.ForeachStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 public class ASTHelper
 {
@@ -20,6 +21,9 @@ public class ASTHelper
             "Short", "String", "StringBuffer", "StringBuilder", "System", "Thread", "ThreadGroup",
             "Throwable", "Void");
 
+    private static Stack<CfgNode> endNodeStack = new Stack<>();// for break statements
+    private static Stack<CfgNode> conditionNodeStack = new Stack<>(); // for continue statements
+    private static CfgEndBlockNode endCfgNode = null; // for return statements
 
     public static String getFullyQualifiedName(Type type, CompilationUnit cu)
     {
@@ -177,7 +181,11 @@ public class ASTHelper
     public static CfgNode generateCFGFromASTBlockNode(CfgNode block)
     {
         CfgNode beginStatementNode = block.getBeforeStatementNode();
-        CfgNode endStatementNode = block.getAfterStatementNode();
+        CfgEndBlockNode endStatementNode = (CfgEndBlockNode) block.getAfterStatementNode();
+
+        if (endCfgNode == null) {
+            endCfgNode = endStatementNode;
+        }
 
         CfgNode cfgRootNode = null;// = beginStatementNode;
 
@@ -194,7 +202,11 @@ public class ASTHelper
 
                     CfgNode currentNode = generateCFGForOneStatement(statement, beginStatementNode, endStatementNode);
 
-                    if (currentNode instanceof CfgBoolExprNode)
+                    if (currentNode instanceof CfgBeginSwitchNode)
+                    {
+                        beginStatementNode = ((CfgBeginSwitchNode)currentNode).getEndBlockNode();
+                    }
+                    else if (currentNode instanceof CfgBoolExprNode)
                     {
                         beginStatementNode = ((CfgBoolExprNode)currentNode).getEndBlockNode();
                     }
@@ -242,11 +254,22 @@ public class ASTHelper
     //câu lệnh mới vào afterNode hay falseNode của beforeNode
     //Hàm trả ra là Nút tương ứng với câu lệnh đầu tiên và một danh sách tương ứng với câu lệnh cuối cùng của
     // khối lệnh mà đứng trước nút End của khối
-    public static CfgNode generateCFGForOneStatement(ASTNode statement, CfgNode beforeNode,
-                                                     CfgNode afterNode)
+    public static CfgNode generateCFGForOneStatement(ASTNode statement, CfgNode beforeNode, CfgNode afterNode)
     {
         CfgNode currentNode;
-        if (statement instanceof IfStatement)
+
+        if(statement instanceof SwitchStatement) {
+            currentNode = new CfgSwitchStatementBlockNode();
+
+            currentNode.setAst(statement);
+
+            LinkCurrentNode(beforeNode, currentNode, afterNode);
+
+            CfgBeginSwitchNode beginSwitchNode = generateCFGFromSwitchASTNode((CfgSwitchStatementBlockNode) currentNode);
+
+            return beginSwitchNode;
+        }
+        else if (statement instanceof IfStatement)
         {
             currentNode = new CfgIfStatementBlockNode();
 
@@ -325,6 +348,7 @@ public class ASTHelper
             currentNode.setAst(statement);
 
             LinkCurrentNode(beforeNode, currentNode, afterNode);
+            generateCFGFromASTBlockNode(currentNode);
         }
         else if (statement instanceof ExpressionStatement)
         {
@@ -340,7 +364,16 @@ public class ASTHelper
 
             currentNode.setAst(statement);
 
-            LinkCurrentNode(beforeNode, currentNode, afterNode);
+//            LinkCurrentNode(beforeNode, currentNode, afterNode);
+
+            // new linking
+            beforeNode.setAfterStatementNode(currentNode);
+            currentNode.setBeforeStatementNode(beforeNode);
+            currentNode.setAfterStatementNode(endCfgNode);
+            endCfgNode.getBeforeEndBoolNodeList().add(currentNode);
+
+            // for controlling "BeforeEndBoolNodeList"
+            afterNode.setBeforeStatementNode(currentNode);
         }
         else if (statement instanceof VariableDeclarationStatement)
         {
@@ -349,6 +382,35 @@ public class ASTHelper
             currentNode.setAst(statement);
 
             LinkCurrentNode(beforeNode, currentNode, afterNode);
+        }
+        else if (statement instanceof BreakStatement) {
+            currentNode = new CfgBreakStatementNode();
+
+            currentNode.setAst(statement);
+
+            // Linking
+            beforeNode.setAfterStatementNode(currentNode);
+            currentNode.setBeforeStatementNode(beforeNode);
+            currentNode.setAfterStatementNode(endNodeStack.peek());
+            ((CfgEndBlockNode) endNodeStack.peek()).getBeforeEndBoolNodeList().add(currentNode);
+
+            // for controlling "BeforeEndBoolNodeList"
+            afterNode.setBeforeStatementNode(currentNode);
+
+        }
+        else if (statement instanceof ContinueStatement) {
+            currentNode = new CfgContinueStatementNode();
+
+            currentNode.setAst(statement);
+
+            // Linking
+            beforeNode.setAfterStatementNode(currentNode);
+            currentNode.setBeforeStatementNode(beforeNode);
+            currentNode.setAfterStatementNode(conditionNodeStack.peek());
+            // connect??
+
+            // for controlling "BeforeEndBoolNodeList"
+            afterNode.setBeforeStatementNode(currentNode);
         }
         else
         {
@@ -375,11 +437,93 @@ public class ASTHelper
         currentNode.setAfterStatementNode(afterNode);
         afterNode.setBeforeStatementNode(currentNode);
 
-        if (afterNode instanceof CfgEndBlockNode)
-        {
-            ((CfgEndBlockNode) afterNode).getBeforeEndBoolNodeList().add(currentNode);
+//        if (afterNode instanceof CfgEndBlockNode)
+//        {
+//            ((CfgEndBlockNode) afterNode).getBeforeEndBoolNodeList().add(currentNode);
+//        }
+
+    }
+
+    // Just being used in "generateCFGFromIfASTNode"
+    private static void addToBeforeEndBoolNodeList(CfgEndBlockNode cfgEndBlockNode) {
+        if(!(cfgEndBlockNode.getBeforeStatementNode() instanceof CfgReturnStatementNode)) {
+            cfgEndBlockNode.getBeforeEndBoolNodeList().add(cfgEndBlockNode.getBeforeStatementNode());
+        }
+    }
+
+    public static CfgBeginSwitchNode generateCFGFromSwitchASTNode(CfgSwitchStatementBlockNode switchCfgNode) {
+        // initialize
+        CfgNode beforeNode = switchCfgNode.getBeforeStatementNode();
+        CfgEndBlockNode cfgEndBlockNode = new CfgEndBlockNode();
+        CfgNode afterNode = switchCfgNode.getAfterStatementNode(); // outside switch block
+
+        // connect end of switch block with outside switch block
+        cfgEndBlockNode.setAfterStatementNode(afterNode);
+        afterNode.setBeforeStatementNode(cfgEndBlockNode);
+
+        // add end node to keep track of latest endBlockNode
+        endNodeStack.push(cfgEndBlockNode);
+
+        // initialize the first node of switch CFG (beginSwitchNode)
+        CfgBeginSwitchNode beginSwitchNode = new CfgBeginSwitchNode();
+
+        // set content, AST, endBlockNode of beginSwitchNode
+        Expression switchExpression = ((SwitchStatement) switchCfgNode.getAst()).getExpression();
+        beginSwitchNode.setEndBlockNode(cfgEndBlockNode);
+        beginSwitchNode.setAst(switchExpression);
+        beginSwitchNode.setContent(switchExpression.toString());
+
+        // connect switch statement with node before switch block
+        beforeNode.setAfterStatementNode(beginSwitchNode);
+        beginSwitchNode.setBeforeStatementNode(beforeNode);
+
+        // get all statements in switch block iterate through them
+        List<ASTNode> caseStatements = ((SwitchStatement) switchCfgNode.getAst()).statements();
+
+        CfgNode previousNode = beginSwitchNode;
+        CfgBoolExprNode previousCaseNode = null;
+
+        for (int i = 0; i < caseStatements.size(); i++) {
+
+            // Check if the statement is a case statement
+            if (caseStatements.get(i) instanceof SwitchCase) {
+                // Case condition expression
+                CfgBoolExprNode caseExpression = new CfgBoolExprNode();
+                caseExpression.setAst(caseStatements.get(i));
+                caseExpression.setContent(caseStatements.get(i).toString());
+
+                // if the previous statement is a break statement
+                if (previousNode instanceof CfgBreakStatementNode) {
+
+                    // then link the case statement with the previous case statement and set false node
+                    LinkCurrentNode(previousCaseNode, caseExpression, endNodeStack.peek());
+                    previousCaseNode.setFalseNode(caseExpression);
+                } else { // if the previous statement is NOT a break statement
+
+                    // then just link the case statement with the previous node as normal (false node is null)
+                    LinkCurrentNode(previousNode, caseExpression, endNodeStack.peek());
+                }
+
+                // update
+                previousCaseNode = caseExpression;
+                previousNode = caseExpression;
+            } else {
+
+                CfgNode tmpNode = generateCFGForOneStatement(caseStatements.get(i), previousNode, endNodeStack.peek());
+
+                // if previous node is a case statement then the current node is its true node
+                if (caseStatements.get(i - 1) instanceof SwitchCase) {
+                    ((CfgBoolExprNode) previousNode).setTrueNode(tmpNode);
+                }
+
+                // update
+                previousNode = tmpNode;
+            }
         }
 
+        endNodeStack.pop();
+
+        return beginSwitchNode;
     }
 
     public static CfgBoolExprNode generateCFGFromIfASTNode(CfgIfStatementBlockNode ifCfgNode)
@@ -414,6 +558,9 @@ public class ASTHelper
 
         CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
 
+        // add to BeforeEndBoolNodeList
+        addToBeforeEndBoolNodeList(cfgEndBoolNode);
+
         ifCondition.setTrueNode(cfgThenNode);
 
         Statement elseAST = ((IfStatement) ifCfgNode.getAst()).getElseStatement();
@@ -429,6 +576,9 @@ public class ASTHelper
             cfgElseNodeBlock.setAfterStatementNode(cfgEndBoolNode);
 
             CfgNode cfgElseNode = generateCFGFromASTBlockNode(cfgElseNodeBlock);
+
+            // add to BeforeEndBoolNodeList
+            addToBeforeEndBoolNodeList(cfgEndBoolNode);
 
             ifCondition.setFalseNode(cfgElseNode);
         }
@@ -493,6 +643,9 @@ public class ASTHelper
         forConditionNode.setAst(forConditionAST);
         forConditionNode.setContent(forConditionAST.toString());
 
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(forConditionNode);
+
         LinkCurrentNode(tempBeforeNode, forConditionNode, afterNode);
 
         //Khoi body
@@ -534,10 +687,22 @@ public class ASTHelper
 
         tempBeforeUpdaterNode.setAfterStatementNode(forConditionNode);
 
-        bodyStatementNode.setAfterStatementNode(firstUpdaterNode);
+        CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
+
+        // add end node to keep track of latest endBlockNode
+        endNodeStack.push(endBodyBlockNode);
+
         bodyStatementNode.setBeforeStatementNode(forConditionNode);
+        bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
+
+        endBodyBlockNode.setAfterStatementNode(firstUpdaterNode);
+        firstUpdaterNode.setBeforeStatementNode(endBodyBlockNode);
 
         CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
+
+        // pop from stack to delete finished "for" block
+        endNodeStack.pop();
+        conditionNodeStack.pop();
 
         forConditionNode.setTrueNode(cfgBodyNode);
         forConditionNode.setFalseNode(cfgEndBlockNode);
@@ -569,6 +734,9 @@ public class ASTHelper
         whileConditionNode.setAst(whileConditionAST);
         whileConditionNode.setContent(whileConditionAST.toString());
 
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(whileConditionNode);
+
         whileConditionNode.setEndBlockNode(cfgEndBlockNode);
         beforeNode.setAfterStatementNode(whileConditionNode);
         whileConditionNode.setBeforeStatementNode(beforeNode);
@@ -580,10 +748,21 @@ public class ASTHelper
         bodyStatementNode.setAst(bodyStatementBlock);
         bodyStatementNode.setContent(bodyStatementBlock.toString());
 
-        bodyStatementNode.setAfterStatementNode(whileConditionNode);
+        CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
+
+        // add end node to keep track of latest endBlockNode
+        endNodeStack.push(endBodyBlockNode);
+
+        bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
         bodyStatementNode.setBeforeStatementNode(whileConditionNode);
 
+        endBodyBlockNode.setAfterStatementNode(whileConditionNode);
+
         CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
+
+        // pop from stack to delete finished "while" block
+        endNodeStack.pop();
+        conditionNodeStack.pop();
 
         whileConditionNode.setTrueNode(cfgBodyNode);
         whileConditionNode.setFalseNode(cfgEndBlockNode);
@@ -630,10 +809,24 @@ public class ASTHelper
 
         doConditionNode.setEndBlockNode(cfgEndBlockNode);
 
-        bodyStatementNode.setAfterStatementNode(doConditionNode);
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(doConditionNode);
+
+        CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
+
+        // add end node to keep track of latest endBlockNode
+        endNodeStack.push(endBodyBlockNode);
+
+        bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
         bodyStatementNode.setBeforeStatementNode(beginDoNode);
 
+        endBodyBlockNode.setAfterStatementNode(doConditionNode);
+        doConditionNode.setBeforeStatementNode(endBodyBlockNode);
+
         CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
+
+        // pop from stack to delete finished "do-while" block
+        endNodeStack.pop();
 
         doConditionNode.setTrueNode(cfgBodyNode);
         doConditionNode.setFalseNode(cfgEndBlockNode);
@@ -674,6 +867,9 @@ public class ASTHelper
         CfgNormalNode parameterNode = new CfgNormalNode();
         parameterNode.setAst(parameterAST);
 
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(expressionNode);
+
         beginForEachNode.setAfterStatementNode(expressionNode);
         expressionNode.setBeforeStatementNode(beginForEachNode);
         expressionNode.setParameterNode(parameterNode);
@@ -685,9 +881,23 @@ public class ASTHelper
         bodyStatementNode.setAst(bodyStatementBlock);
         bodyStatementNode.setContent(bodyStatementBlock.toString());
 
-        LinkCurrentNode(expressionNode, bodyStatementNode, expressionNode);
+//        LinkCurrentNode(expressionNode, bodyStatementNode, expressionNode);
+
+        CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
+
+        // add end node to keep track of latest endBlockNode
+        endNodeStack.push(endBodyBlockNode);
+
+        bodyStatementNode.setBeforeStatementNode(expressionNode);
+        bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
+
+        endBodyBlockNode.setAfterStatementNode(expressionNode);
 
         CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
+
+        // pop from stack to delete finished "for-each" block
+        endNodeStack.pop();
+        conditionNodeStack.pop();
 
         expressionNode.setHasElementAfterNode(cfgBodyNode);
         expressionNode.setNoMoreElementAfterNode(cfgEndBlockNode);
