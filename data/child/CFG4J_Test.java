@@ -235,18 +235,58 @@ public class CFG4J_Test
     {
         // If a year is multiple of 400,
         // then it is a leap year
-        if (year % 400 == 0)
+        if (year % 400 == 0) {
             return true;
+        }
 
         // Else If a year is multiple of 100,
         // then it is not a leap year
-        if (year % 100 == 0)
+        else if (year % 100 == 0) {
             return false;
+        }
 
         // Else If a year is multiple of 4,
         // then it is a leap year
-        if (year % 4 == 0)
+        else if (year % 4 == 0) {
             return true;
+        }
+
         return false;
+    }
+
+    public void testForEachLoop(ArrayList<String> s) {
+        for(String i : s) {
+            System.out.println("hi" + i);
+            System.out.println("bye" + i);
+        }
+    }
+
+    public void testIf(int x) {
+        if(x == 10) {
+            System.out.println("hi");
+        }
+        if(x == 100){
+            System.out.println("100");
+        } else if (x == 1000) {
+            System.out.println(1000);
+        } else {
+            System.out.println("not a number");
+        }
+    }
+
+    public void testSwitchCase(int x) {
+        switch (x) {
+            case 1:
+                System.out.println("Hi everyone");
+                System.out.println("one");
+            case 2:
+                System.out.println("Me too");
+                System.out.println("two");
+                break;
+            case 3:
+                System.out.println("just three");
+            default:
+                System.out.println("not a number");
+        }
     }
 }

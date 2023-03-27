@@ -1,6 +1,8 @@
+import core.algorithms.FindAllPath;
 import core.cfg.CfgBlock;
 import core.cfg.CfgEndBlockNode;
 import core.cfg.CfgNode;
+import core.dataStructure.Path;
 import core.parser.ASTHelper;
 import core.parser.ProjectParser;
 import core.utils.Utils;
@@ -36,7 +38,7 @@ public class AppStart {
         System.out.println("count = " + funcAstNodeList.size());
 
         for (ASTNode func : funcAstNodeList) {
-            if (((MethodDeclaration)func).getName().getIdentifier().equals("SelectionSort"))
+            if (((MethodDeclaration)func).getName().getIdentifier().equals("testIf"))
             {
 //                System.out.println("func = " + ((MethodDeclaration)func).getName());
 //                System.out.println("parameters.size() = " + ((MethodDeclaration)func).parameters().size());
@@ -53,8 +55,6 @@ public class AppStart {
                         //callback.accept(totalUsedMem);
                     }
                 };
-
-
 
                 T.scheduleAtFixedRate(memoryTask, 0, 1); //0 delay and 5 ms tick
 
@@ -75,7 +75,11 @@ public class AppStart {
                 block.setBeforeStatementNode(cfgBeginCfgNode);
                 block.setAfterStatementNode(cfgEndCfgNode);
 
-                ASTHelper.generateCFGFromASTBlockNode(block);
+                FindAllPath paths = new FindAllPath(ASTHelper.generateCFGFromASTBlockNode(block));
+
+                for(Path pathI : paths.getPaths()) {
+                    System.out.println(pathI);
+                }
 
                 LocalDateTime afterTime = LocalDateTime.now();
 
@@ -85,13 +89,13 @@ public class AppStart {
 
                 T.cancel();
 
-                System.out.println("func = " + ((MethodDeclaration)func).getName());
-                System.out.println("used time = " + diff + " ms");
-//                System.out.println("tickCount = " + tickCount);
-                float usedMem = ((float)totalUsedMem)/tickCount/1024/1024;
-                System.out.print("used mem = ");
-                System.out.printf("%.2f", usedMem);
-                System.out.println(" MB");
+//                System.out.println("func = " + ((MethodDeclaration)func).getName());
+//                System.out.println("used time = " + diff + " ms");
+////                System.out.println("tickCount = " + tickCount);
+//                float usedMem = ((float)totalUsedMem)/tickCount/1024/1024;
+//                System.out.print("used mem = ");
+//                System.out.printf("%.2f", usedMem);
+//                System.out.println(" MB");
             }
         }
 

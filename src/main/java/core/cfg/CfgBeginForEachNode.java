@@ -1,5 +1,7 @@
 package core.cfg;
 
+import core.node.Node;
+
 public class CfgBeginForEachNode extends CfgNode
 {
     private CfgEndBlockNode endBlockNode = null;

@@ -495,14 +495,15 @@ public class ASTHelper
                 // if the previous statement is a break statement
                 if (previousNode instanceof CfgBreakStatementNode) {
 
-                    // then link the case statement with the previous case statement and set false node
+                    // then link the case statement with the previous case statement
                     LinkCurrentNode(previousCaseNode, caseExpression, endNodeStack.peek());
-                    previousCaseNode.setFalseNode(caseExpression);
                 } else { // if the previous statement is NOT a break statement
 
-                    // then just link the case statement with the previous node as normal (false node is null)
+                    // then just link the case statement with the previous node as normal
                     LinkCurrentNode(previousNode, caseExpression, endNodeStack.peek());
                 }
+                // set falseNode
+                if(previousCaseNode != null) previousCaseNode.setFalseNode(caseExpression);
 
                 // update
                 previousCaseNode = caseExpression;
@@ -643,9 +644,6 @@ public class ASTHelper
         forConditionNode.setAst(forConditionAST);
         forConditionNode.setContent(forConditionAST.toString());
 
-        // add condition node to keep track of the latest condition node
-        conditionNodeStack.push(forConditionNode);
-
         LinkCurrentNode(tempBeforeNode, forConditionNode, afterNode);
 
         //Khoi body
@@ -686,6 +684,9 @@ public class ASTHelper
         }
 
         tempBeforeUpdaterNode.setAfterStatementNode(forConditionNode);
+
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(firstUpdaterNode);
 
         CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
 
