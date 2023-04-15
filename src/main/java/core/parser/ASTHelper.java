@@ -339,16 +339,16 @@ public class ASTHelper
 //            System.out.println("beginDoNode = " + beginDoNode.toString());
 
             return beginDoNode;
-
         }
         else if (statement instanceof Block)
         {
+            // NEED FIXING (generateCFGFromBlockASTNode) !!!!!!!!!
             currentNode = new CfgBlock();
 
             currentNode.setAst(statement);
 
             LinkCurrentNode(beforeNode, currentNode, afterNode);
-            generateCFGFromASTBlockNode(currentNode);
+            currentNode = generateCFGFromASTBlockNode(currentNode);
         }
         else if (statement instanceof ExpressionStatement)
         {
@@ -446,7 +446,10 @@ public class ASTHelper
 
     // Just being used in "generateCFGFromIfASTNode"
     private static void addToBeforeEndBoolNodeList(CfgEndBlockNode cfgEndBlockNode) {
-        if(!(cfgEndBlockNode.getBeforeStatementNode() instanceof CfgReturnStatementNode)) {
+        CfgNode beforeNode = cfgEndBlockNode.getBeforeStatementNode();
+        if(!(beforeNode instanceof CfgReturnStatementNode ||
+                beforeNode instanceof CfgBreakStatementNode ||
+                beforeNode instanceof CfgContinueStatementNode)) {
             cfgEndBlockNode.getBeforeEndBoolNodeList().add(cfgEndBlockNode.getBeforeStatementNode());
         }
     }

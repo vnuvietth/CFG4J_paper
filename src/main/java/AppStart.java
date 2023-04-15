@@ -6,21 +6,16 @@ import core.dataStructure.Path;
 import core.parser.ASTHelper;
 import core.parser.ProjectParser;
 import core.utils.Utils;
-import extent.Exporter;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.*;
 //import sun.nio.ch.Util;
 
 //import javax.rmi.CORBA.Util;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.Consumer;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
@@ -30,7 +25,7 @@ public class AppStart {
     private static long totalUsedMem = 0;
     private static long tickCount = 0;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, CloneNotSupportedException {
         String path = "data\\child\\CFG4J_Test.java";
         System.out.println("Start parsing...");
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
@@ -38,10 +33,11 @@ public class AppStart {
         System.out.println("count = " + funcAstNodeList.size());
 
         for (ASTNode func : funcAstNodeList) {
-            if (((MethodDeclaration)func).getName().getIdentifier().equals("testIf"))
+            if (((MethodDeclaration)func).getName().getIdentifier().equals("testSymbolicExecution"))
             {
 //                System.out.println("func = " + ((MethodDeclaration)func).getName());
-//                System.out.println("parameters.size() = " + ((MethodDeclaration)func).parameters().size());
+                System.out.println("parameters.size() = " + ((MethodDeclaration) func).parameters().size());
+//                System.out.println(((SingleVariableDeclaration)((MethodDeclaration) func).parameters().get(0)).getName().getIdentifier());
 
                 Timer T = new Timer(true);
 
@@ -77,9 +73,17 @@ public class AppStart {
 
                 FindAllPath paths = new FindAllPath(ASTHelper.generateCFGFromASTBlockNode(block));
 
-                for(Path pathI : paths.getPaths()) {
-                    System.out.println(pathI);
-                }
+                System.out.println("Number of paths: " + paths.getPaths().size());
+                Path testPath = paths.getPaths().get(0);
+//                System.out.println(testPath);
+//                System.out.println(((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide());
+//                System.out.println(((InfixExpression)((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide()).getLeftOperand().getClass());
+                testPath.symbolicExecution(((MethodDeclaration) func).parameters());
+//                for(Object node : ((InfixExpression)((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide()).extendedOperands()) {
+//                    System.out.println(node);
+//                    System.out.println(node.getClass());
+//                }
+
 
                 LocalDateTime afterTime = LocalDateTime.now();
 

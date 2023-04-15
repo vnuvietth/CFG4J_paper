@@ -157,10 +157,7 @@ public class CFG4J_Test
         list.add("hello");
         list.add("world");
 
-        for (
-                String str :
-                list
-        )
+        for (String str : list)
         {
             System.out.println("str = " + str);
             int i = 5 + 10;
@@ -254,6 +251,21 @@ public class CFG4J_Test
         return false;
     }
 
+    public void testSymbolicExecution(int x, char y, double z, boolean boo) {
+        int a, b;
+        {
+            a = 20;
+        }
+        b = 8;
+        x = 5;
+        y = 'b';
+        boo = false;
+        z = 10.3;
+        if((boo == true && y =='a') || (z != 3.2 && x >= 5)) {
+            System.out.println("hello");
+        }
+    }
+
     public void testForEachLoop(ArrayList<String> s) {
         for(String i : s) {
             System.out.println("hi" + i);
@@ -288,5 +300,13 @@ public class CFG4J_Test
             default:
                 System.out.println("not a number");
         }
+    }
+
+    public void testDoWhile() {
+        int x = 10;
+        do {
+            x--;
+            System.out.println(x);
+        } while (x > 0);
     }
 }
