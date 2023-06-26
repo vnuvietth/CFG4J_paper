@@ -228,7 +228,7 @@ public class CFG4J_Test
 ////        return f;
 //    }
 
-    public bool LeapYear()
+    public boolean LeapYear(int year)
     {
         // If a year is multiple of 400,
         // then it is a leap year
@@ -252,17 +252,26 @@ public class CFG4J_Test
     }
 
     public void testSymbolicExecution(int x, char y, double z, boolean boo) {
+        int c, d = 10;
+        int[][] arr = {{1, 2, 3}, {1, 2, 3}};
+        int[][][] a = new int[10][20][10];
+        int c = 10 + x;
+        int f = 6;
+        char b;
+        b = '5';
         int a, b;
         {
-            a = 20;
+            a = 22;
+            b = 9;
         }
-        b = 8;
-        x = 5;
+        b = 8 + c;
         y = 'b';
         boo = false;
-        z = 10.3;
-        if((boo == true && y =='a') || (z != 3.2 && x >= 5)) {
-            System.out.println("hello");
+        if(x * b == a * 9 && x != 6 && b == 8) {
+            System.out.println("abc");
+        }
+        for(int i = 0; i < x; i = i + 1) {
+//            System.out.println(i);
         }
     }
 

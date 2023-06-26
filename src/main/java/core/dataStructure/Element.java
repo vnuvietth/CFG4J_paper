@@ -9,6 +9,9 @@ public class Element<type> implements Cloneable {
 
     private Expression literal;
 
+    public Element() {
+    }
+
     public Element(type element, boolean isAssigned, Expression literal) {
         this.element = element;
         this.isAssigned = isAssigned;
@@ -26,6 +29,10 @@ public class Element<type> implements Cloneable {
 
     public type getElement() {
         return this.element;
+    }
+
+    public String getElementToString() {
+        return this.element.toString();
     }
 
     public boolean isAssigned() {

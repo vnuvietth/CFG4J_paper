@@ -1,5 +1,6 @@
 import core.algorithms.FindAllPath;
-import core.cfg.CfgBlock;
+import core.algorithms.SymbolicExecution;
+import core.cfg.CfgBlockNode;
 import core.cfg.CfgEndBlockNode;
 import core.cfg.CfgNode;
 import core.dataStructure.Path;
@@ -7,25 +8,28 @@ import core.parser.ASTHelper;
 import core.parser.ProjectParser;
 import core.utils.Utils;
 import org.eclipse.jdt.core.dom.*;
-//import sun.nio.ch.Util;
-
-//import javax.rmi.CORBA.Util;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
+//import com.microsoft.z3.*;
+
 public class AppStart {
 //    private static final Logger LOGGER = LoggerFactory.getLogger(CppApi.class);
-
     private static long totalUsedMem = 0;
     private static long tickCount = 0;
 
-    public static void main(String[] args) throws IOException, CloneNotSupportedException {
+    public static void main(String[] args) throws IOException {
+//        System.load("D:/CFG4J_paper/z3-4.12.2-x64-win/bin/libz3java.dll");
+//        Version version = new Version();
+//        Context ctx = new Context();
+//        Expr a = ctx.mkToRe(ctx.mkString("abcd"));
         String path = "data\\child\\CFG4J_Test.java";
         System.out.println("Start parsing...");
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
@@ -33,9 +37,10 @@ public class AppStart {
         System.out.println("count = " + funcAstNodeList.size());
 
         for (ASTNode func : funcAstNodeList) {
-            if (((MethodDeclaration)func).getName().getIdentifier().equals("testSymbolicExecution"))
+            if (((MethodDeclaration)func).getName().getIdentifier().equals("LeapYear"))
             {
-//                System.out.println("func = " + ((MethodDeclaration)func).getName());
+                System.out.println("func = " + ((MethodDeclaration)func).getName());
+                List<ASTNode> parameters = ((MethodDeclaration) func).parameters();
                 System.out.println("parameters.size() = " + ((MethodDeclaration) func).parameters().size());
 //                System.out.println(((SingleVariableDeclaration)((MethodDeclaration) func).parameters().get(0)).getName().getIdentifier());
 
@@ -56,7 +61,6 @@ public class AppStart {
 
                 LocalDateTime beforeTime = LocalDateTime.now();
 
-
                 Block functionBlock = Utils.getFunctionBlock(func);
 
                 CfgNode cfgBeginCfgNode = new CfgNode();
@@ -65,7 +69,7 @@ public class AppStart {
                 CfgEndBlockNode cfgEndCfgNode = new CfgEndBlockNode();
                 cfgEndCfgNode.setIsEndCfgNode(true);
 
-                CfgNode block = new CfgBlock();
+                CfgNode block = new CfgBlockNode();
                 block.setAst(functionBlock);
 
                 block.setBeforeStatementNode(cfgBeginCfgNode);
@@ -74,11 +78,13 @@ public class AppStart {
                 FindAllPath paths = new FindAllPath(ASTHelper.generateCFGFromASTBlockNode(block));
 
                 System.out.println("Number of paths: " + paths.getPaths().size());
-                Path testPath = paths.getPaths().get(0);
-//                System.out.println(testPath);
+                Path testPath = paths.getPaths().get(1);
+                System.out.println(testPath);
+                SymbolicExecution solution = new SymbolicExecution(testPath, parameters);
+
 //                System.out.println(((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide());
 //                System.out.println(((InfixExpression)((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide()).getLeftOperand().getClass());
-                testPath.symbolicExecution(((MethodDeclaration) func).parameters());
+//                testPath.symbolicExecution(((MethodDeclaration) func).parameters());
 //                for(Object node : ((InfixExpression)((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide()).extendedOperands()) {
 //                    System.out.println(node);
 //                    System.out.println(node.getClass());

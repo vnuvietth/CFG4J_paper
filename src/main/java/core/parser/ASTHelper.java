@@ -145,7 +145,7 @@ public class ASTHelper
             }
             else if (node instanceof Block)
             {
-                cfgChild = new CfgBlock();
+                cfgChild = new CfgBlockNode();
             }
             else if (node instanceof ExpressionStatement)
             {
@@ -221,6 +221,10 @@ public class ASTHelper
                     else if (currentNode instanceof CfgBeginForEachNode)
                     {
                         beginStatementNode = ((CfgBeginForEachNode)currentNode).getEndBlockNode();
+                    }
+                    else if (currentNode instanceof CfgBeginBlockNode) 
+                    {
+                        beginStatementNode = ((CfgBeginBlockNode) currentNode).getEndBlockNode();
                     }
                     else
                     {
@@ -343,12 +347,12 @@ public class ASTHelper
         else if (statement instanceof Block)
         {
             // NEED FIXING (generateCFGFromBlockASTNode) !!!!!!!!!
-            currentNode = new CfgBlock();
-
+            currentNode = new CfgBlockNode();
             currentNode.setAst(statement);
 
             LinkCurrentNode(beforeNode, currentNode, afterNode);
-            currentNode = generateCFGFromASTBlockNode(currentNode);
+            CfgBeginBlockNode cfgBeginBlockNode = generateCFGFromBlockASTNode((CfgBlockNode) currentNode);
+            return cfgBeginBlockNode;
         }
         else if (statement instanceof ExpressionStatement)
         {
@@ -551,7 +555,7 @@ public class ASTHelper
         beforeNode.setAfterStatementNode(ifCondition);
 
         Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
-        CfgNode cfgThenNodeBlock = new CfgBlock();
+        CfgNode cfgThenNodeBlock = new CfgBlockNode();
 
         cfgThenNodeBlock.setAst(thenAST);
         cfgThenNodeBlock.setContent(thenAST.toString());
@@ -571,7 +575,7 @@ public class ASTHelper
 
         if (elseAST != null)
         {
-            CfgNode cfgElseNodeBlock = new CfgBlock();
+            CfgNode cfgElseNodeBlock = new CfgBlockNode();
             cfgElseNodeBlock.setAst(elseAST);
             cfgElseNodeBlock.setContent(elseAST.toString());
 
@@ -594,6 +598,28 @@ public class ASTHelper
         ifCondition.setEndBlockNode(cfgEndBoolNode);
 
         return ifCondition;
+    }
+
+    private static CfgBeginBlockNode generateCFGFromBlockASTNode(CfgBlockNode cfgBlockNode) {
+        CfgNode beforeNode = cfgBlockNode.getBeforeStatementNode();
+        CfgBeginBlockNode beginBlockNode = new CfgBeginBlockNode();
+
+        beforeNode.setAfterStatementNode(beginBlockNode);
+        beginBlockNode.setBeforeStatementNode(beforeNode);
+
+        CfgEndBlockNode cfgEndBlockNode = new CfgEndBlockNode();
+        CfgNode afterNode = cfgBlockNode.getAfterStatementNode();
+
+        cfgEndBlockNode.setAfterStatementNode(afterNode);
+        afterNode.setBeforeStatementNode(cfgEndBlockNode);
+
+        beginBlockNode.setEndBlockNode(cfgEndBlockNode);
+        cfgBlockNode.setAfterStatementNode(cfgEndBlockNode);
+        cfgBlockNode.setBeforeStatementNode(beginBlockNode);
+
+        beginBlockNode.setAfterStatementNode(generateCFGFromASTBlockNode(cfgBlockNode));
+        
+        return beginBlockNode;
     }
 
     public static CfgBeginForNode generateCFGFromForASTNode(CfgForStatementBlockNode forCfgNode)
@@ -651,7 +677,7 @@ public class ASTHelper
 
         //Khoi body
         Statement bodyStatementBlock = ((ForStatement) forCfgNode.getAst()).getBody();
-        CfgNode bodyStatementNode = new CfgBlock();
+        CfgNode bodyStatementNode = new CfgBlockNode();
 
         bodyStatementNode.setAst(bodyStatementBlock);
         bodyStatementNode.setContent(bodyStatementBlock.toString());
@@ -747,7 +773,7 @@ public class ASTHelper
 
         //Khoi body
         Statement bodyStatementBlock = ((WhileStatement) whileCfgNode.getAst()).getBody();
-        CfgNode bodyStatementNode = new CfgBlock();
+        CfgNode bodyStatementNode = new CfgBlockNode();
 
         bodyStatementNode.setAst(bodyStatementBlock);
         bodyStatementNode.setContent(bodyStatementBlock.toString());
@@ -799,7 +825,7 @@ public class ASTHelper
 
         //Khoi body
         Statement bodyStatementBlock = ((DoStatement) doCfgNode.getAst()).getBody();
-        CfgNode bodyStatementNode = new CfgBlock();
+        CfgNode bodyStatementNode = new CfgBlockNode();
 
         bodyStatementNode.setAst(bodyStatementBlock);
         bodyStatementNode.setContent(bodyStatementBlock.toString());
@@ -880,7 +906,7 @@ public class ASTHelper
 
         //Khoi body
         Statement bodyStatementBlock = ((EnhancedForStatement) forEachCfgNode.getAst()).getBody();
-        CfgNode bodyStatementNode = new CfgBlock();
+        CfgNode bodyStatementNode = new CfgBlockNode();
 
         bodyStatementNode.setAst(bodyStatementBlock);
         bodyStatementNode.setContent(bodyStatementBlock.toString());

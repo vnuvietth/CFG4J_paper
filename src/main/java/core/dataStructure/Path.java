@@ -1,23 +1,13 @@
 package core.dataStructure;
+
+import core.algorithms.SymbolicExecutionAlgorithms;
+import core.ast.additionalNodes.Node;
 import core.cfg.*;
 import org.eclipse.jdt.core.dom.*;
 
-import java.io.DataOutputStream;
 import java.util.*;
 
 public class Path {
-    public class Node {
-        CfgNode data;
-        Node next;
-
-        public Node() {
-        }
-
-        public Node(CfgNode data) {
-            this.data = data;
-            this.next = null;
-        }
-    }
 
     private Node beginNode;
 
@@ -31,27 +21,50 @@ public class Path {
         Node previousNode = currentNode;
         currentNode = new Node(data);
         if (isEmpty()) beginNode = currentNode;
-        else previousNode.next = currentNode;
+        else previousNode.setNext(currentNode);
     }
 
     @Override
     public String toString() {
+        System.out.println(1 + "3" + 4 + 5 + "6");
         StringBuilder p = new StringBuilder("===============\n");
         Node tmpNode = beginNode;
         while (tmpNode != null) {
-            p.append(tmpNode.data.toString());
+//            if(tmpNode.getData().getAst() instanceof VariableDeclarationStatement) {
+//                ArrayNode arrayNode = (ArrayNode) ArrayInitializerNode.executeArrayInitializer(((ArrayInitializer)((VariableDeclarationFragment)((VariableDeclarationStatement) tmpNode.getData().getAst()).fragments().get(0)).getInitializer()), null);
+//                System.out.println("abc");
+
+//                MemoryModel memoryModel = new MemoryModel();
+//                AstNode astNode = AstNode.executeASTNode((VariableDeclarationStatement) tmpNode.getData().getAst(), memoryModel);
+//                System.out.println("abc");
+//            }
+
+//            if (tmpNode.getData().getAst() instanceof ExpressionStatement) {
+//                if(((ExpressionStatement) tmpNode.getData().getAst()).getExpression() instanceof Assignment) {
+//                    Assignment assignment = (Assignment) ((ExpressionStatement) tmpNode.getData().getAst()).getExpression();
+//                    InfixExpressionNode infixExpressionNode = InfixExpressionNode.executeInfixExpression((InfixExpression) assignment.getRightHandSide());
+//                    ExpressionNode res = InfixExpressionNode.executeInfixExpressionNode(infixExpressionNode, null);
+//                    System.out.println("haha");
+//                }
+//
+//            }
+            p.append(tmpNode.getData().toString());
             p.append("\n");
-            tmpNode = tmpNode.next;
+            tmpNode = tmpNode.getNext();
         }
         p.append("===============");
         return p.toString();
     }
 
-    public CfgNode getBeginNode() {
-        return beginNode.data;
+    public CfgNode getBeginCfgNode() {
+        return beginNode.getData();
     }
 
-    private HashMap<String, Element> S = new HashMap<>();
+    public Node getBeginNode() {
+        return beginNode;
+    }
+
+    private HashMap<String, Element<?>> S = new HashMap<>();
 
     public void symbolicExecution(List parameters) {
 
@@ -59,7 +72,7 @@ public class Path {
 
         Node tmpNode = beginNode;
         while (tmpNode != null) {
-            CfgNode cfgNode = tmpNode.data;
+            CfgNode cfgNode = tmpNode.getData();
 
 //            if(executeScopeStatement(cfgNode)) { // Lenh Scope
 //                tmpNode = tmpNode.next;
@@ -72,21 +85,36 @@ public class Path {
             } else if (statement instanceof ExpressionStatement) { // Lenh gan
                 executeAssignment(statement);
             } else if (cfgNode instanceof CfgBoolExprNode) {
-                constraintExpressions.add(new StringBuilder(""));
-                listTypeConstraintExpressions.add(new ArrayList<>());
-                executeConditionStatement(statement);
-                System.out.println(constraintExpressions.peek());
-                System.out.println(listTypeConstraintExpressionToString(listTypeConstraintExpressions.peek()));
+                System.out.println(cfgNode.getAst());
+                ConstraintExpressionNode rootNode = SymbolicExecutionAlgorithms.infixExpressionToStatementTree(S, cfgNode.getAst());
+                rootNode = SymbolicExecutionAlgorithms.analyzeStatementTree(rootNode);
+                System.out.println(rootNode.toString());
+                rootNode = SymbolicExecutionAlgorithms.analyzeStatementTree(rootNode);
+                System.out.println(rootNode.toString());
+
+                rootNode = SymbolicExecutionAlgorithms.analyzeStatementTree(rootNode);
+                System.out.println(rootNode.toString());
+
+                rootNode = SymbolicExecutionAlgorithms.analyzeStatementTree(rootNode);
+                System.out.println(rootNode.toString());
+
+                System.out.println("SMT Format:     " + rootNode.prefixToString());
+
+//                rootNode = SymbolicExecutionAlgorithms.analyzeStatementTree(rootNode);
+//                System.out.println(rootNode.toString());
+//
+//                rootNode = SymbolicExecutionAlgorithms.analyzeStatementTree(rootNode);
+//                System.out.println(rootNode.toString());
             }
-            tmpNode = tmpNode.next;
+            tmpNode = tmpNode.getNext();
         }
 
         System.out.println(S);
     }
 
     private void executeParameters(List parameters) {
-        for(int i = 0; i < parameters.size(); i++) {
-            if(parameters.get(i) instanceof SingleVariableDeclaration) {
+        for (int i = 0; i < parameters.size(); i++) {
+            if (parameters.get(i) instanceof SingleVariableDeclaration) {
                 SingleVariableDeclaration parameter = (SingleVariableDeclaration) parameters.get(i);
                 Element element = null;
                 Type type = parameter.getType();
@@ -164,44 +192,6 @@ public class Path {
         }
     }
 
-    private Stack<StringBuilder> constraintExpressions = new Stack();
-
-    private Stack<List<String>> listTypeConstraintExpressions = new Stack<>();
-
-    private ASTNode executeConditionStatement(ASTNode statement) {
-        if(statement instanceof InfixExpression) {
-            InfixExpression infixExpression = (InfixExpression) statement;
-
-            ASTNode leftOperand = executeConditionStatement(infixExpression.getLeftOperand());
-            String operator = infixExpression.getOperator().toString();
-            addToCurrentConstraintExpression(operator);
-            ASTNode rightOperand = executeConditionStatement(infixExpression.getRightOperand());
-
-            rewriteConditionStatement(leftOperand, operator, rightOperand);
-
-        } else if(statement instanceof ParenthesizedExpression) {
-            addToCurrentConstraintExpression("(");
-            ASTNode tmp = executeConditionStatement(((ParenthesizedExpression) statement).getExpression());
-            addToCurrentConstraintExpression(")");
-            return tmp;
-        } else if(statement instanceof SimpleName) {
-            String variableName = ((SimpleName) statement).getIdentifier();
-            Element variableValue = S.get(variableName);
-            if (variableValue.isAssigned()) {
-                addToCurrentConstraintExpression(variableValue);
-                return variableValue.getLiteral();
-            } else {
-                addToCurrentConstraintExpression(variableName);
-                return statement;
-            }
-        } else {
-            addToCurrentConstraintExpression(statement.toString());
-            return statement;
-        }
-
-        return null;
-
-    }
 
     private Element dealWithPrimitiveTypeDeclaration(Type type) {
         String primitiveType = ((PrimitiveType) type).getPrimitiveTypeCode().toString();
@@ -235,103 +225,6 @@ public class Path {
             return tmpElement;
         }
         return null;
-    }
-
-    private String calculateInfixExpression(ASTNode leftOperand, String operator, ASTNode rightOperand) {
-        if(isSimplestOperand(leftOperand) && isSimplestOperand(rightOperand)) {
-            Comparable left = assignTypeAndValue(leftOperand);
-            Comparable right = assignTypeAndValue(rightOperand);
-
-            boolean compareValue;
-
-            if(operator.equals("==")) {
-                compareValue = left.compareTo(right) == 0;
-                return String.valueOf(compareValue);
-            } else if(operator.equals("<")) {
-                compareValue = left.compareTo(right) < 0;
-                return String.valueOf(compareValue);
-            } else if(operator.equals(">")) {
-                compareValue = left.compareTo(right) > 0;
-                return String.valueOf(compareValue);
-            } else if(operator.equals(">=")) {
-                compareValue = left.compareTo(right) >= 0;
-                return String.valueOf(compareValue);
-            } else if(operator.equals("<=")) {
-                compareValue = left.compareTo(right) <= 0;
-                return String.valueOf(compareValue);
-            } else if(operator.equals("!=")) {
-                compareValue = left.compareTo(right) != 0;
-                return String.valueOf(compareValue);
-            } else if(operator.equals("&&")) {
-                compareValue = ((Boolean) left) && ((Boolean) right);
-                return String.valueOf(compareValue);
-            } else if(operator.equals("||")) {
-                compareValue = ((Boolean) left) || ((Boolean) right);
-                return String.valueOf(compareValue);
-            } else if(operator.equals("+")) {
-
-            }
-        }
-        return "Hasn't been assigned!";
-    }
-
-    private Comparable assignTypeAndValue(ASTNode operand) {
-        if(operand instanceof NumberLiteral) {
-            return Double.valueOf(((NumberLiteral) operand).getToken());
-        } else if(operand instanceof CharacterLiteral) {
-            return Character.valueOf(((CharacterLiteral) operand).charValue());
-        } else if(operand instanceof BooleanLiteral) {
-            return ((BooleanLiteral) operand).booleanValue();
-        } else {
-            return new Comparable() {
-                @Override
-                public int compareTo(Object o) {
-                    return 0;
-                }
-            };
-        }
-    }
-
-    private void rewriteConditionStatement(ASTNode leftOperand, String operator, ASTNode rightOperand) {
-        String statement = calculateInfixExpression(leftOperand, operator, rightOperand);
-        if(!statement.equals("Hasn't been assigned!")) {
-            for (int i = 0; i < 3; i++) {
-                listTypeConstraintExpressions.peek().remove(listTypeConstraintExpressions.peek().size() - 1);
-            }
-            addToCurrentConstraintExpression(statement);
-        }
-    }
-
-    private boolean isSimplestOperand(ASTNode expression) {
-        if(expression instanceof CharacterLiteral ||
-                expression instanceof NumberLiteral ||
-                expression instanceof BooleanLiteral) return true;
-        else return false;
-    }
-
-
-    private String listTypeConstraintExpressionToString(List<String> listTypeConstraintExpression) {
-        StringBuilder result = new StringBuilder();
-        for(String i : listTypeConstraintExpression) {
-            result.append(i + " ");
-        }
-        return result.toString();
-    }
-
-    private void addToCurrentConstraintExpression(String value) {
-        listTypeConstraintExpressions.peek().add(value);
-        constraintExpressions.peek().append(value + " ");
-    }
-
-    private void addToCurrentConstraintExpression(Element value) {
-        String result = "";
-        if(value.getElement() instanceof Character) {
-            result = "'" + value.getElement().toString() + "'";
-        } else {
-            result = value.getElement().toString();
-        }
-        listTypeConstraintExpressions.peek().add(result);
-        constraintExpressions.peek().append(result + " ");
     }
 
     //    private int currentScope = 0;
