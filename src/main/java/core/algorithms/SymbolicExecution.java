@@ -37,7 +37,13 @@ public final class SymbolicExecution {
                 AstNode executedAstNode = AstNode.executeASTNode(astNode, memoryModel);
                 if(currentNode.getData() instanceof CfgBoolExprNode) {
                     if(executedAstNode instanceof InfixExpressionNode) {
-                        constrains.add(((InfixExpressionNode) executedAstNode).constrainToString());
+                        String constrain = ((InfixExpressionNode) executedAstNode).constrainToString();
+
+
+                        if(currentNode.getNext() != null && currentNode.getNext().getData().isFalseNode()) {
+                            constrain = "! " + constrain;
+                        }
+                        constrains.add(constrain);
                     }
                 }
             }

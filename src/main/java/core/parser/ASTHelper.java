@@ -569,7 +569,11 @@ public class ASTHelper
         // add to BeforeEndBoolNodeList
         addToBeforeEndBoolNodeList(cfgEndBoolNode);
 
-        ifCondition.setTrueNode(cfgThenNode);
+        if(cfgThenNode == null) {
+            ifCondition.setTrueNode(cfgEndBoolNode);
+        } else {
+            ifCondition.setTrueNode(cfgThenNode);
+        }
 
         Statement elseAST = ((IfStatement) ifCfgNode.getAst()).getElseStatement();
 
@@ -617,7 +621,13 @@ public class ASTHelper
         cfgBlockNode.setAfterStatementNode(cfgEndBlockNode);
         cfgBlockNode.setBeforeStatementNode(beginBlockNode);
 
-        beginBlockNode.setAfterStatementNode(generateCFGFromASTBlockNode(cfgBlockNode));
+        CfgNode bodyNode = generateCFGFromASTBlockNode(cfgBlockNode);
+
+        if(bodyNode != null) {
+            beginBlockNode.setAfterStatementNode(bodyNode);
+        } else {
+            beginBlockNode.setAfterStatementNode(cfgEndBlockNode);
+        }
         
         return beginBlockNode;
     }
@@ -720,7 +730,7 @@ public class ASTHelper
         CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
 
         // add end node to keep track of latest endBlockNode
-        endNodeStack.push(endBodyBlockNode);
+        endNodeStack.push(cfgEndBlockNode);
 
         bodyStatementNode.setBeforeStatementNode(forConditionNode);
         bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
@@ -734,7 +744,11 @@ public class ASTHelper
         endNodeStack.pop();
         conditionNodeStack.pop();
 
-        forConditionNode.setTrueNode(cfgBodyNode);
+        if(cfgBodyNode == null) {
+            forConditionNode.setTrueNode(endBodyBlockNode);
+        } else {
+            forConditionNode.setTrueNode(cfgBodyNode);
+        }
         forConditionNode.setFalseNode(cfgEndBlockNode);
 
         cfgEndBlockNode.getBeforeEndBoolNodeList().add(forConditionNode);
@@ -781,7 +795,7 @@ public class ASTHelper
         CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
 
         // add end node to keep track of latest endBlockNode
-        endNodeStack.push(endBodyBlockNode);
+        endNodeStack.push(cfgEndBlockNode);
 
         bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
         bodyStatementNode.setBeforeStatementNode(whileConditionNode);
@@ -794,7 +808,11 @@ public class ASTHelper
         endNodeStack.pop();
         conditionNodeStack.pop();
 
-        whileConditionNode.setTrueNode(cfgBodyNode);
+        if(cfgBodyNode != null) {
+            whileConditionNode.setTrueNode(cfgBodyNode);
+        } else {
+            whileConditionNode.setTrueNode(endBodyBlockNode);
+        }
         whileConditionNode.setFalseNode(cfgEndBlockNode);
 
         cfgEndBlockNode.getBeforeEndBoolNodeList().add(whileConditionNode);
@@ -845,7 +863,7 @@ public class ASTHelper
         CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
 
         // add end node to keep track of latest endBlockNode
-        endNodeStack.push(endBodyBlockNode);
+        endNodeStack.push(cfgEndBlockNode);
 
         bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
         bodyStatementNode.setBeforeStatementNode(beginDoNode);
@@ -858,7 +876,11 @@ public class ASTHelper
         // pop from stack to delete finished "do-while" block
         endNodeStack.pop();
 
-        doConditionNode.setTrueNode(cfgBodyNode);
+        if(cfgBodyNode != null) {
+            doConditionNode.setTrueNode(cfgBodyNode);
+        } else {
+            doConditionNode.setTrueNode(endBodyBlockNode);
+        }
         doConditionNode.setFalseNode(cfgEndBlockNode);
 
         cfgEndBlockNode.getBeforeEndBoolNodeList().add(doConditionNode);
@@ -916,7 +938,7 @@ public class ASTHelper
         CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
 
         // add end node to keep track of latest endBlockNode
-        endNodeStack.push(endBodyBlockNode);
+        endNodeStack.push(cfgEndBlockNode);
 
         bodyStatementNode.setBeforeStatementNode(expressionNode);
         bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
@@ -929,7 +951,11 @@ public class ASTHelper
         endNodeStack.pop();
         conditionNodeStack.pop();
 
-        expressionNode.setHasElementAfterNode(cfgBodyNode);
+        if(cfgBodyNode != null) {
+            expressionNode.setHasElementAfterNode(cfgBodyNode);
+        } else {
+            expressionNode.setHasElementAfterNode(endBodyBlockNode);
+        }
         expressionNode.setNoMoreElementAfterNode(cfgEndBlockNode);
 
         cfgEndBlockNode.getBeforeEndBoolNodeList().add(expressionNode);

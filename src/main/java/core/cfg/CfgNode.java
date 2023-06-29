@@ -19,6 +19,8 @@ public class CfgNode
     private boolean isBeginCfgNode = false; //Nut dau CFG (nút giả)
     private boolean isEndCfgNode = false; //Nut cuoi CFG (nút giả)
 
+    private boolean isFalseNode = false; //Nut false cua cau lenh dieu kien
+
     private String content = "";
 
     public CfgNode(ASTNode ast)
@@ -113,6 +115,14 @@ public class CfgNode
     public void setVisited(boolean visited)
     {
         isVisited = visited;
+    }
+
+    public boolean isFalseNode() {
+        return isFalseNode;
+    }
+
+    public void setIsFalseNode(boolean falseNode) {
+        isFalseNode = falseNode;
     }
 
     public static CfgNode parseToCFG(SFunctionNode functionNode)

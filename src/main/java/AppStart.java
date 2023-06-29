@@ -18,18 +18,12 @@ import java.util.TimerTask;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-//import com.microsoft.z3.*;
-
 public class AppStart {
 //    private static final Logger LOGGER = LoggerFactory.getLogger(CppApi.class);
     private static long totalUsedMem = 0;
     private static long tickCount = 0;
 
     public static void main(String[] args) throws IOException {
-//        System.load("D:/CFG4J_paper/z3-4.12.2-x64-win/bin/libz3java.dll");
-//        Version version = new Version();
-//        Context ctx = new Context();
-//        Expr a = ctx.mkToRe(ctx.mkString("abcd"));
         String path = "data\\child\\CFG4J_Test.java";
         System.out.println("Start parsing...");
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
@@ -37,7 +31,7 @@ public class AppStart {
         System.out.println("count = " + funcAstNodeList.size());
 
         for (ASTNode func : funcAstNodeList) {
-            if (((MethodDeclaration)func).getName().getIdentifier().equals("LeapYear"))
+            if (((MethodDeclaration)func).getName().getIdentifier().equals("testSymbolicExecution"))
             {
                 System.out.println("func = " + ((MethodDeclaration)func).getName());
                 List<ASTNode> parameters = ((MethodDeclaration) func).parameters();
@@ -78,7 +72,7 @@ public class AppStart {
                 FindAllPath paths = new FindAllPath(ASTHelper.generateCFGFromASTBlockNode(block));
 
                 System.out.println("Number of paths: " + paths.getPaths().size());
-                Path testPath = paths.getPaths().get(1);
+                Path testPath = paths.getPaths().get(2);
                 System.out.println(testPath);
                 SymbolicExecution solution = new SymbolicExecution(testPath, parameters);
 

@@ -13,7 +13,7 @@ public class FindAllPath {
     private List<Path> paths = new ArrayList<>();
     private List<CfgNode> currentPath = new ArrayList<>();
 
-    private final int DEPTH = 2;
+    private final int DEPTH = 1;
 
     public FindAllPath() {}
 
@@ -34,19 +34,23 @@ public class FindAllPath {
             paths.add(path);
             currentPath.remove(currentPath.size() - 1);
         } else {
+            int duplicateNode = numberOfDuplicateNode(cfgNode);
             currentPath.add(cfgNode);
             if(cfgNode instanceof CfgBoolExprNode) {
+                CfgBoolExprNode boolExprNode = (CfgBoolExprNode) cfgNode;
 
                 // CfgBoolExprNode has 2 child node is trueNode and falseNode
-                if(numberOfDuplicateNode(cfgNode) < DEPTH) {
-                    findPaths(((CfgBoolExprNode) cfgNode).getTrueNode());
+                if(duplicateNode < DEPTH) {
+                    findPaths(boolExprNode.getTrueNode());
                 }
-                findPaths(((CfgBoolExprNode) cfgNode).getFalseNode());
+                CfgNode falseNode = boolExprNode.getFalseNode();
+                falseNode.setIsFalseNode(true);
+                findPaths(falseNode);
 
             } else if(cfgNode instanceof CfgForEachExpressionNode) {
 
                 // CfgForEachExpressionNode has 2 child node is hasElementNode and noMoreElementNode
-                if(numberOfDuplicateNode(cfgNode) < DEPTH) {
+                if(duplicateNode < DEPTH) {
                     findPaths(((CfgForEachExpressionNode) cfgNode).getHasElementAfterNode());
                 }
                 findPaths(((CfgForEachExpressionNode) cfgNode).getNoMoreElementAfterNode());
