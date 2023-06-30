@@ -39,7 +39,6 @@ public final class SymbolicExecution {
                     if(executedAstNode instanceof InfixExpressionNode) {
                         String constrain = ((InfixExpressionNode) executedAstNode).constrainToString();
 
-
                         if(currentNode.getNext() != null && currentNode.getNext().getData().isFalseNode()) {
                             constrain = "! " + constrain;
                         }

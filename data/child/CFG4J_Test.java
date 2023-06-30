@@ -267,13 +267,9 @@ public class CFG4J_Test
         b = 8 + c;
         y = 'b';
         boo = false;
-        if(x * b == a * 9 && x != 6 && b == 8) {
-            System.out.println("abc");
-        } else if(x == 10) {
-            System.out.println("abc");
-        } else {
-            System.out.println("abcsc");
-        }
+//        if(x * b == a * 9 && x != 6 && b == 8) {
+//            System.out.println("abc");
+//        }
         for(int i = 0; i < x; i = i + 1) {
             System.out.println(i);
         }

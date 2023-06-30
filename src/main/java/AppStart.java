@@ -72,7 +72,7 @@ public class AppStart {
                 FindAllPath paths = new FindAllPath(ASTHelper.generateCFGFromASTBlockNode(block));
 
                 System.out.println("Number of paths: " + paths.getPaths().size());
-                Path testPath = paths.getPaths().get(2);
+                Path testPath = paths.getPaths().get(0);
                 System.out.println(testPath);
                 SymbolicExecution solution = new SymbolicExecution(testPath, parameters);
 

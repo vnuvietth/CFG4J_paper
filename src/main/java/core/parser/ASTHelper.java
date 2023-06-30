@@ -660,8 +660,6 @@ public class ASTHelper
         {
             CfgNormalNode normalNode = new CfgNormalNode();
 
-            System.out.println("");
-
             if (initializers.get(i) instanceof VariableDeclarationExpression)
             {
                 normalNode.setAst((VariableDeclarationExpression) initializers.get(i));
@@ -688,7 +686,6 @@ public class ASTHelper
         //Khoi body
         Statement bodyStatementBlock = ((ForStatement) forCfgNode.getAst()).getBody();
         CfgNode bodyStatementNode = new CfgBlockNode();
-
         bodyStatementNode.setAst(bodyStatementBlock);
         bodyStatementNode.setContent(bodyStatementBlock.toString());
 
@@ -724,19 +721,19 @@ public class ASTHelper
 
         tempBeforeUpdaterNode.setAfterStatementNode(forConditionNode);
 
-        // add condition node to keep track of the latest condition node
-        conditionNodeStack.push(firstUpdaterNode);
-
-        CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
-
         // add end node to keep track of latest endBlockNode
         endNodeStack.push(cfgEndBlockNode);
+
+        CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
 
         bodyStatementNode.setBeforeStatementNode(forConditionNode);
         bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
 
         endBodyBlockNode.setAfterStatementNode(firstUpdaterNode);
         firstUpdaterNode.setBeforeStatementNode(endBodyBlockNode);
+
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(endBodyBlockNode);
 
         CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
 
@@ -778,9 +775,6 @@ public class ASTHelper
         whileConditionNode.setAst(whileConditionAST);
         whileConditionNode.setContent(whileConditionAST.toString());
 
-        // add condition node to keep track of the latest condition node
-        conditionNodeStack.push(whileConditionNode);
-
         whileConditionNode.setEndBlockNode(cfgEndBlockNode);
         beforeNode.setAfterStatementNode(whileConditionNode);
         whileConditionNode.setBeforeStatementNode(beforeNode);
@@ -801,6 +795,9 @@ public class ASTHelper
         bodyStatementNode.setBeforeStatementNode(whileConditionNode);
 
         endBodyBlockNode.setAfterStatementNode(whileConditionNode);
+
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(endBodyBlockNode);
 
         CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
 
@@ -857,9 +854,6 @@ public class ASTHelper
 
         doConditionNode.setEndBlockNode(cfgEndBlockNode);
 
-        // add condition node to keep track of the latest condition node
-        conditionNodeStack.push(doConditionNode);
-
         CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
 
         // add end node to keep track of latest endBlockNode
@@ -870,6 +864,9 @@ public class ASTHelper
 
         endBodyBlockNode.setAfterStatementNode(doConditionNode);
         doConditionNode.setBeforeStatementNode(endBodyBlockNode);
+
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(endBodyBlockNode);
 
         CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
 
@@ -919,9 +916,6 @@ public class ASTHelper
         CfgNormalNode parameterNode = new CfgNormalNode();
         parameterNode.setAst(parameterAST);
 
-        // add condition node to keep track of the latest condition node
-        conditionNodeStack.push(expressionNode);
-
         beginForEachNode.setAfterStatementNode(expressionNode);
         expressionNode.setBeforeStatementNode(beginForEachNode);
         expressionNode.setParameterNode(parameterNode);
@@ -944,6 +938,9 @@ public class ASTHelper
         bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
 
         endBodyBlockNode.setAfterStatementNode(expressionNode);
+
+        // add condition node to keep track of the latest condition node
+        conditionNodeStack.push(endBodyBlockNode);
 
         CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
 
