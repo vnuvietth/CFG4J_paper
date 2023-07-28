@@ -1,4 +1,4 @@
-package com.thealgorithms.devutils.nodes;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.devutils.nodes;
 
 /**
  * Base class for any node implementation which contains a generic type

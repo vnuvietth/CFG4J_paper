@@ -4,7 +4,7 @@
 
 /** Program description - To sort the LinkList as per sorting technique */
 
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
 import java.util.*;
 

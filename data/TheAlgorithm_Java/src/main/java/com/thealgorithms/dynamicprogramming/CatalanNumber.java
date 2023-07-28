@@ -1,4 +1,4 @@
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 /**
  * This file contains an implementation of finding the nth CATALAN NUMBER using

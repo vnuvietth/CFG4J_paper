@@ -1,4 +1,4 @@
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 /**
  * In mathematics, an arithmetic progression (AP) or arithmetic sequence is a

@@ -5,7 +5,7 @@
 /** Program description - To find the New Man Shanks Prime. */
 /** Wikipedia Link - https://en.wikipedia.org/wiki/Newman%E2%80%93Shanks%E2%80%93Williams_prime */
 
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 public class NewManShanksPrime {
 

@@ -1,4 +1,4 @@
-package com.thealgorithms.others;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.others;
 
 import java.util.Random;
 import java.util.Scanner;

@@ -1,4 +1,4 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
 /**
  * The Dutch National Flag Sort sorts a sequence of values into three permutations which are defined by a value given

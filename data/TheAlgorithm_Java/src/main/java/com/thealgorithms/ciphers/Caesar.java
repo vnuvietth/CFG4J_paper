@@ -1,4 +1,4 @@
-package com.thealgorithms.ciphers;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.ciphers;
 
 /**
  * A Java implementation of Caesar Cipher. /It is a type of substitution cipher

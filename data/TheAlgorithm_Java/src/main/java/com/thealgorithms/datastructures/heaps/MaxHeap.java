@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.heaps;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.heaps;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.disjointsets;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.disjointsets;
 
 public class Node<T> {
 

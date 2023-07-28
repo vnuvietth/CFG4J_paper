@@ -1,4 +1,4 @@
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 /**
  * DynamicProgramming solution for the Egg Dropping Puzzle

@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.graphs;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.graphs;
 
 /**
  * A Java program for Prim's Minimum Spanning Tree (MST) algorithm. adjacency

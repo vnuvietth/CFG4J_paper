@@ -1,4 +1,4 @@
-package com.thealgorithms.conversions;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.conversions;
 
 // hex = [0 - 9] -> [A - F]
 class DecimalToHexaDecimal {

@@ -1,4 +1,4 @@
-package com.thealgorithms.others;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.others;
 
 /**
  * Dijkstra's algorithm,is a graph search algorithm that solves the

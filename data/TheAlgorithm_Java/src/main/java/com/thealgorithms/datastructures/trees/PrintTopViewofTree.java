@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.trees; // Java program to print top view of Binary tree
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.trees; // Java program to print top view of Binary tree
 
 import java.util.HashSet;
 import java.util.LinkedList;

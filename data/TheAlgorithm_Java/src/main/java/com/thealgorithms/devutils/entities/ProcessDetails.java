@@ -1,4 +1,4 @@
-package com.thealgorithms.devutils.entities;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.devutils.entities;
 
 public class ProcessDetails {
     private String processId;

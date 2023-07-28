@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.heaps;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.heaps;
 
 /**
  * @author Nicolas Renard Exception to be thrown if the getElement method is

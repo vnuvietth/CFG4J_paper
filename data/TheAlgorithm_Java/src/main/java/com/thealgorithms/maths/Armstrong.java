@@ -1,4 +1,4 @@
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 /**
  * An Armstrong number is equal to the sum of the cubes of its digits. For

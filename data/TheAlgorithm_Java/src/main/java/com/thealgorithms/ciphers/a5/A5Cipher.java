@@ -1,4 +1,4 @@
-package com.thealgorithms.ciphers.a5;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.ciphers.a5;
 
 import java.util.BitSet;
 

@@ -1,4 +1,4 @@
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

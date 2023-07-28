@@ -1,4 +1,4 @@
-package com.thealgorithms.minimizinglateness;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.minimizinglateness;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

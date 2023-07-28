@@ -1,4 +1,4 @@
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 /* A Naive recursive implementation
 of 0-1 Knapsack problem */

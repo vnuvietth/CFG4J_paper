@@ -1,5 +1,6 @@
 package core.ast.Expression;
 
+import core.ast.Expression.Name.NameNode;
 import core.ast.Type.ArrayTypeNode;
 import core.ast.AstNode;
 import core.ast.Type.AnnotatableType.PrimitiveTypeNode;
@@ -30,6 +31,9 @@ public class ArrayCreationNode extends ExpressionNode {
                                                                     int iterateDimension, int numberOfDimensions, Type type, MemoryModel memoryModel) {
         int capacityOfDimension;
         AstNode dimension = AstNode.executeASTNode(dimensions.get(iterateDimension), memoryModel);
+        if(dimension instanceof NameNode) {
+            dimension = NameNode.executeNameNode((NameNode) dimension, memoryModel);
+        }
         if(dimension instanceof LiteralNode) {
             capacityOfDimension = LiteralNode.changeLiteralNodeToInteger((LiteralNode) dimension);
         } else {
@@ -49,10 +53,9 @@ public class ArrayCreationNode extends ExpressionNode {
                         (PrimitiveType) type, capacityOfDimension));
             } else if (type.isSimpleType()) {
                 // ...?
-                return null;
+                throw new RuntimeException("Invalid type");
             } else {
-                // ...?
-                return null;
+                throw new RuntimeException("Invalid type");
             }
         } else {
             throw new RuntimeException("Iterate dimension out of bound!");

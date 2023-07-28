@@ -1,4 +1,4 @@
-package com.thealgorithms.others;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.others;
 
 /* Program to reverse a Stack using Recursion*/
 import java.util.Stack;

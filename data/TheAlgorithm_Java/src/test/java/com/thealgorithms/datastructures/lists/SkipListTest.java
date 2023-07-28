@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.lists;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.datastructures.lists;
 
 import static org.junit.jupiter.api.Assertions.*;
 

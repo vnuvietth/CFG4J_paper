@@ -1,4 +1,4 @@
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 import java.util.ArrayList;
 import java.util.Arrays;

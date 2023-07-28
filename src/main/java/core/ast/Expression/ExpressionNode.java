@@ -4,32 +4,17 @@ import core.ast.*;
 import core.ast.Expression.Literal.*;
 import core.ast.Expression.Literal.NumberLiteral.NumberLiteralNode;
 import core.ast.Expression.Name.NameNode;
+import core.ast.Expression.OperationExpression.*;
 import core.dataStructure.MemoryModel;
 import org.eclipse.jdt.core.dom.*;
 
 public abstract class ExpressionNode extends AstNode {
 
     public static AstNode executeExpression(Expression expression, MemoryModel memoryModel) {
-        if (expression instanceof InfixExpression) {
-            return InfixExpressionNode.executeInfixExpression((InfixExpression) expression, memoryModel);
-        } else if (expression instanceof PrefixExpression) {
-            return PrefixExpressionNode.executePrefixExpression((PrefixExpression) expression);
-        } else if (expression instanceof PostfixExpression) {
-            return PostfixExpressionNode.executePostfixExpression((PostfixExpression) expression);
-        } else if (expression instanceof NumberLiteral) {
-            return NumberLiteralNode.executeNumberLiteral((NumberLiteral) expression);
-        } else if (expression instanceof CharacterLiteral) {
-            return CharacterLiteralNode.executeCharacterLiteral((CharacterLiteral) expression);
-        } else if (expression instanceof BooleanLiteral) {
-            return BooleanLiteralNode.executeBooleanLiteral((BooleanLiteral) expression);
-        } else if (expression instanceof StringLiteral) {
-            return StringLiteralNode.executeStringLiteral((StringLiteral) expression);
-        } else if (expression instanceof NullLiteral) {
-            /*???*/
-            return null;
-        } else if (expression instanceof TypeLiteral) {
-            /*???*/
-            return null;
+        if (isOperationExpression(expression)) {
+            return OperationExpressionNode.executeOperationExpression(expression, memoryModel);
+        } else if (isLiteral(expression)) {
+            return LiteralNode.executeLiteral(expression, memoryModel);
         } else if (expression instanceof ArrayInitializer) {
             return ArrayInitializerNode.executeArrayInitializer((ArrayInitializer) expression, memoryModel);
         } else if (expression instanceof ArrayCreation) {
@@ -53,6 +38,23 @@ public abstract class ExpressionNode extends AstNode {
 
     public final boolean isLiteralNode() {
         return this instanceof LiteralNode;
+    }
+
+    public static boolean isLiteral(Expression expression) {
+        return (expression instanceof NumberLiteral) ||
+                (expression instanceof CharacterLiteral) ||
+                (expression instanceof TypeLiteral) ||
+                (expression instanceof NullLiteral) ||
+                (expression instanceof StringLiteral) ||
+                (expression instanceof BooleanLiteral);
+
+    }
+
+    public static boolean isOperationExpression(Expression expression) {
+        return (expression instanceof InfixExpression) ||
+                (expression instanceof PostfixExpression) ||
+                (expression instanceof PrefixExpression) ||
+                (expression instanceof ParenthesizedExpression);
     }
 
 }

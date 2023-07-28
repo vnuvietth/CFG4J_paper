@@ -1,4 +1,4 @@
-package com.thealgorithms.conversions;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.conversions;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

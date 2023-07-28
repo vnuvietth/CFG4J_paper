@@ -1,4 +1,4 @@
-package com.thealgorithms.conversions;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.conversions;
 
 /**
  * @author Varun Upadhyay (https://github.com/varunu28)

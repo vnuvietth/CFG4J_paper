@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.bloomfilter;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.bloomfilter;
 
 import java.util.BitSet;
 

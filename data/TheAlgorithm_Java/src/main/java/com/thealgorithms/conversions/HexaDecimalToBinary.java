@@ -1,4 +1,4 @@
-package com.thealgorithms.conversions;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.conversions;
 
 // Hex [0-9],[A-F] -> Binary [0,1]
 public class HexaDecimalToBinary {

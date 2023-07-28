@@ -3,7 +3,7 @@
  */
 
 /** Program description - Given an integer array. The task is to find the maximum of the minimum of the array */
-package com.thealgorithms.datastructures.stacks;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.stacks;
 
 import java.util.*;
 

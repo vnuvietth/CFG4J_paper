@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.queues;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.queues;
 
 import java.util.NoSuchElementException;
 

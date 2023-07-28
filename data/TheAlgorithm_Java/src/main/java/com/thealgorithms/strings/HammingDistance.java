@@ -1,4 +1,4 @@
-package com.thealgorithms.strings;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.strings;
 
 /* In information theory, the Hamming distance between two strings of equal length 
 is the number of positions at which the corresponding symbols are different. 

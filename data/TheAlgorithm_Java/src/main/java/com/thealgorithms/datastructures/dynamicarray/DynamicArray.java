@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.dynamicarray;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.dynamicarray;
 
 import java.util.*;
 import java.util.function.Consumer;

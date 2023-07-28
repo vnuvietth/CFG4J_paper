@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.heaps;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.heaps;
 
 /**
  * Minimum Priority Queue It is a part of heap data structure A heap is a

@@ -1,4 +1,4 @@
-package com.thealgorithms.others.cn;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.others.cn;
 
 import java.util.ArrayList;
 import java.util.List;

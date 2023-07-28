@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.graphs;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.graphs;
 
 /**
  * Java program for Hamiltonian Cycle (https://en.wikipedia.org/wiki/Hamiltonian_path)

@@ -1,4 +1,4 @@
-package com.thealgorithms.misc;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.misc;
 
 import java.util.Collections;
 import java.util.PriorityQueue;

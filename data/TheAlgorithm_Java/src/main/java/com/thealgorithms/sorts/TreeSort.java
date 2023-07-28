@@ -1,8 +1,8 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
-import static com.thealgorithms.sorts.SortUtils.print;
+import static data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts.SortUtils.print;
 
-import com.thealgorithms.datastructures.trees.BSTRecursiveGeneric;
+import data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.trees.BSTRecursiveGeneric;
 import java.util.List;
 
 /**

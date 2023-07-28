@@ -1,4 +1,4 @@
-package com.thealgorithms.others;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.others;
 
 /**
  * Implementation of Knuth–Morris–Pratt algorithm Usage: see the main function

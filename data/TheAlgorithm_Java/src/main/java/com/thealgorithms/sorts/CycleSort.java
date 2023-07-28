@@ -1,7 +1,7 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
-import static com.thealgorithms.sorts.SortUtils.less;
-import static com.thealgorithms.sorts.SortUtils.print;
+import static data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts.SortUtils.less;
+import static data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts.SortUtils.print;
 
 /**
  * @author Podshivalov Nikita (https://github.com/nikitap492)

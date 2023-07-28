@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.stacks;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.stacks;
 
 /**
  * This class implements a Stack using a regular array.

@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.hashmap.hashing;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.datastructures.hashmap.hashing;
 
 import static org.junit.jupiter.api.Assertions.*;
 

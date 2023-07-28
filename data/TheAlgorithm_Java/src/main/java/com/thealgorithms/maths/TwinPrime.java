@@ -1,4 +1,4 @@
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 /*
  * Java program to find 'twin prime' of a prime number
  * Twin Prime: Twin prime of a number n is (n+2) 

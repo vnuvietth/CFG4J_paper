@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.trees;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.trees;
 
 /**
  * Trie Data structure implementation without any libraries

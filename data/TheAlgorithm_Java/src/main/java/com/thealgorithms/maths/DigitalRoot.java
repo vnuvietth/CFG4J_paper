@@ -34,7 +34,7 @@
  * return (n%10) + (n/10)
  * Step 5 : In main method simply take n as input and then call digitalRoot(int n) function and print the result
  */
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 class DigitalRoot {
 

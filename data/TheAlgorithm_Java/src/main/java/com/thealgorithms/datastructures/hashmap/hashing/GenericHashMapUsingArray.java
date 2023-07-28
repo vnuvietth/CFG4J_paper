@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.hashmap.hashing;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.hashmap.hashing;
 
 import java.util.LinkedList;
 

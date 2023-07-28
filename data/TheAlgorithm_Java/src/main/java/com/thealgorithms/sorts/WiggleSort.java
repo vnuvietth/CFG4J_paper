@@ -1,8 +1,8 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
 import static com.thealgorithms.maths.Ceil.ceil;
 import static com.thealgorithms.maths.Floor.floor;
-import static com.thealgorithms.searches.QuickSelect.select;
+import static data.TheAlgorithm_Java.src.main.java.com.thealgorithms.searches.QuickSelect.select;
 
 import java.util.Arrays;
 

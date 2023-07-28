@@ -1,4 +1,4 @@
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 // Given N dice each with M faces, numbered from 1 to M, find the number of ways to get sum X.
 // X is the summation of values on each face when all the dice are thrown.

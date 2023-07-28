@@ -1,4 +1,4 @@
-package com.thealgorithms.matrixexponentiation;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.matrixexponentiation;
 
 import java.util.Scanner;
 

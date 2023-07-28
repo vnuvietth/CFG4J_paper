@@ -11,7 +11,7 @@
 
 /** Program description - To find the number of unique paths possible */
 
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 import java.util.*;
 

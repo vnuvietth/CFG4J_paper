@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.graphs;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.graphs;
 
 // Problem -> Connect all the edges with the minimum cost.
 // Possible Solution -> Kruskal Algorithm (KA), KA finds the minimum-spanning-tree, which means, the

@@ -1,4 +1,4 @@
-package com.thealgorithms.others;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.others;
 
 // Java Program to implement Auto-Complete
 // Feature using Trie

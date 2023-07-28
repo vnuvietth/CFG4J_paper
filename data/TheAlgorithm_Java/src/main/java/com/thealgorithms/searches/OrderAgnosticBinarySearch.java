@@ -1,4 +1,4 @@
-package com.thealgorithms.searches;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.searches;
 
 //URL: https://www.geeksforgeeks.org/order-agnostic-binary-search/
 

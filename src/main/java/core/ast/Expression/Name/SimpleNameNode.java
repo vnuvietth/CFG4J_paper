@@ -10,22 +10,31 @@ public class SimpleNameNode extends NameNode {
     public static ExpressionNode executeSimpleName(SimpleName simpleName, MemoryModel memoryModel) {
         SimpleNameNode simpleNameNode = new SimpleNameNode();
         simpleNameNode.identifier = simpleName.getIdentifier();
-        return NameNode.executeNameNode(simpleNameNode, memoryModel);
+//        return NameNode.executeNameNode(simpleNameNode, memoryModel);
+        return simpleNameNode;
     }
 
     public static ExpressionNode executeSimpleNameNode(SimpleNameNode simpleNameNode, MemoryModel memoryModel) {
-        return (ExpressionNode) memoryModel.get(simpleNameNode.identifier);
+        return (ExpressionNode) memoryModel.getValue(simpleNameNode.identifier);
     }
 
     public static String getStringSimpleName(SimpleName simpleName) {
         return simpleName.getIdentifier();
     }
 
+    public static String getStringSimpleNameNode(SimpleNameNode simpleNameNode) {
+        return simpleNameNode.identifier;
+    }
     public String getIdentifier() {
         return this.identifier;
     }
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    @Override
+    public String toString() {
+        return identifier;
     }
 }

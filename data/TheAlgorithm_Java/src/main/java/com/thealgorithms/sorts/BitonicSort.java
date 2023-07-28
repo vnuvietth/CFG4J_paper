@@ -1,4 +1,4 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
 /* Java program for Bitonic Sort. Note that this program
 works only when size of input is a power of 2. */

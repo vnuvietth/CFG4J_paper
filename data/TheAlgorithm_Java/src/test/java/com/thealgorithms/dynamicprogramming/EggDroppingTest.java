@@ -1,4 +1,4 @@
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.dynamicprogramming;
 
 import org.junit.jupiter.api.Test;
 

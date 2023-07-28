@@ -1,4 +1,4 @@
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 /**
  * @see <a href="https://en.wikipedia.org/wiki/Combination">Combination</a>

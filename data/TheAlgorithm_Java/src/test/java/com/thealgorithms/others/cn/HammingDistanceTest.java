@@ -1,4 +1,4 @@
-package com.thealgorithms.others.cn;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.others.cn;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableTypeAssert;

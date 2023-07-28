@@ -1,4 +1,4 @@
-package com.thealgorithms.strings;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.strings;
 
 /**
  * Given a string, moving several characters in front of the string to the end

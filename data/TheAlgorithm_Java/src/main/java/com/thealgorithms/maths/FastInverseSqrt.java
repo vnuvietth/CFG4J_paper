@@ -6,7 +6,7 @@
 
 /** Wikipedia Link - https://en.wikipedia.org/wiki/Fast_inverse_square_root */
 
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 public class FastInverseSqrt {
 

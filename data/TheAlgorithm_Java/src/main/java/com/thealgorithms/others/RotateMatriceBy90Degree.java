@@ -1,4 +1,4 @@
-package com.thealgorithms.others;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.others;
 
 /**
  * Given a matrix of size n x n We have to rotate this matrix by 90 Degree Here

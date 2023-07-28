@@ -2,7 +2,6 @@ package core.ast.VariableDeclaration;
 
 import core.ast.AstNode;
 import core.ast.Expression.Name.SimpleNameNode;
-import core.ast.VariableDeclaration.VariableDeclarationNode;
 import core.dataStructure.MemoryModel;
 import org.eclipse.jdt.core.dom.*;
 
@@ -24,7 +23,11 @@ public class SingleVariableDeclarationNode extends VariableDeclarationNode {
 
         String key = simpleNameNode.getIdentifier();
 
-        memoryModel.put(key, simpleNameNode);
+        if(type instanceof PrimitiveType) {
+            memoryModel.declarePrimitiveTypeVariable(((PrimitiveType) type).getPrimitiveTypeCode(), key, simpleNameNode);
+        } else { // OTHER TYPES
+
+        }
 
 
 //        if(type instanceof PrimitiveType) {

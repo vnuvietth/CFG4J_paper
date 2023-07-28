@@ -1,6 +1,6 @@
-package com.thealgorithms.misc;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.misc;
 
-import com.thealgorithms.datastructures.lists.SinglyLinkedList;
+import data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.lists.SinglyLinkedList;
 import java.util.Stack;
 
 /**

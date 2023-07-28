@@ -1,4 +1,4 @@
-package com.thealgorithms.ciphers;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.ciphers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

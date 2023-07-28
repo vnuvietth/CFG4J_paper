@@ -1,4 +1,4 @@
-package com.thealgorithms.scheduling;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.scheduling;
 
 import com.thealgorithms.devutils.entities.ProcessDetails;
 import org.junit.jupiter.api.Test;

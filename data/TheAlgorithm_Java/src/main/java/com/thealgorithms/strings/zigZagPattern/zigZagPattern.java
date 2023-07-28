@@ -1,4 +1,4 @@
-package com.thealgorithms.strings.zigZagPattern;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.strings.zigZagPattern;
 
 class zigZagPattern {
 

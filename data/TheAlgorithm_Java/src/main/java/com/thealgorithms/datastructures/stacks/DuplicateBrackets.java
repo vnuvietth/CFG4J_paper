@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.stacks;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.stacks;
 
 //  1. You are given a string exp representing an expression.
 // 2. Assume that the expression is balanced  i.e. the opening and closing brackets match with each other.

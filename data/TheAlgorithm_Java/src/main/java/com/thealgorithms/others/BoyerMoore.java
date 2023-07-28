@@ -3,7 +3,7 @@ find the majority element is an array that appears more than n/2 times in an arr
 where "n" is the length of the array.
 For more information on the algorithm refer https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_majority_vote_algorithm
  */
-package com.thealgorithms.others;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.others;
 
 import java.util.*;
 

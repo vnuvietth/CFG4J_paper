@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.lists;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.lists;
 
 import java.util.Arrays;
 import java.util.Comparator;

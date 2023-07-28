@@ -1,6 +1,12 @@
 package core.ast.Expression.Literal.NumberLiteral;
 
+import core.ast.AstNode;
+
 public class DoubleLiteralNode extends NumberLiteralNode {
+
+    public DoubleLiteralNode() {
+        super.setTokenValue("0.0");
+    }
 
     public static DoubleLiteralNode executeDoubleLiteral(double value) {
         DoubleLiteralNode doubleLiteralNode = new DoubleLiteralNode();
@@ -31,5 +37,10 @@ public class DoubleLiteralNode extends NumberLiteralNode {
 
     public void setTokenValue(int integerValue) {
         super.setTokenValue(String.valueOf((double) integerValue));
+    }
+
+    @Override
+    public String toString() {
+        return super.getTokenValue();
     }
 }

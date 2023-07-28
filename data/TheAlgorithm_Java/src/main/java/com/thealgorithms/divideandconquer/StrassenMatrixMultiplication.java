@@ -1,4 +1,4 @@
-package com.thealgorithms.divideandconquer;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.divideandconquer;
 
 // Java Program to Implement Strassen Algorithm for Matrix Multiplication
 

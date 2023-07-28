@@ -1,4 +1,4 @@
-package com.thealgorithms.devutils.nodes;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.devutils.nodes;
 
 /**
  * Simple TreeNode extension that holds references to two child Nodes (left and

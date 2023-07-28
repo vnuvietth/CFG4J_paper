@@ -3,7 +3,7 @@ package core.ast.Expression.Literal.NumberLiteral;
 import core.ast.Expression.Literal.LiteralNode;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 
-public class NumberLiteralNode extends LiteralNode {
+public abstract class NumberLiteralNode extends LiteralNode {
     private String tokenValue = "0";
 
     public static NumberLiteralNode executeNumberLiteral(NumberLiteral numberLiteral) {

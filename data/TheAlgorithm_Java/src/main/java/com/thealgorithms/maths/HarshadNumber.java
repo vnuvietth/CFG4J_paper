@@ -1,4 +1,4 @@
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 // Wikipedia for Harshad Number : https://en.wikipedia.org/wiki/Harshad_number
 

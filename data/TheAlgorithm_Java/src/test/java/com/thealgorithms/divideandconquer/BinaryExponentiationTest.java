@@ -1,4 +1,4 @@
-package com.thealgorithms.divideandconquer;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.divideandconquer;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,6 +1,6 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
-import static com.thealgorithms.sorts.SortUtils.*;
+import static data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts.SortUtils.*;
 
 public class ShellSort implements SortAlgorithm {
 

@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.trees;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.datastructures.trees;
 
 import org.junit.jupiter.api.Test;
 

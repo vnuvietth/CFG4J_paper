@@ -1,4 +1,4 @@
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.maths;
 
 import static org.junit.jupiter.api.Assertions.*;
 

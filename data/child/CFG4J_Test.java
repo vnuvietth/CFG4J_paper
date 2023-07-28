@@ -1,3 +1,5 @@
+package data.child;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,37 +29,37 @@ public class CFG4J_Test
         return (int) (sum / numbers.length);
     }
 
-    public <T extends Comparable<T>> T[] SimpleSort(T[] array) {
-        final int LENGTH = array.length;
+//    public <T extends Comparable<T>> T[] SimpleSort(T[] array) {
+//        final int LENGTH = array.length;
+//
+//        for (int i = 0; i < LENGTH; i++) {
+//            for (int j = i + 1; j < LENGTH; j++) {
+//                if (less(array[j], array[i])) {
+//                    T element = array[j];
+//                    array[j] = array[i];
+//                    array[i] = element;
+//                }
+//            }
+//        }
+//
+//        return array;
+//    }
 
-        for (int i = 0; i < LENGTH; i++) {
-            for (int j = i + 1; j < LENGTH; j++) {
-                if (less(array[j], array[i])) {
-                    T element = array[j];
-                    array[j] = array[i];
-                    array[i] = element;
-                }
-            }
-        }
-
-        return array;
-    }
-
-    public <T extends Comparable<T>> T[] BubbleSort(T[] array) {
-        for (int i = 1, size = array.length; i < size; ++i) {
-            boolean swapped = false;
-            for (int j = 0; j < size - i; ++j) {
-                if (greater(array[j], array[j + 1])) {
-                    swap(array, j, j + 1);
-                    swapped = true;
-                }
-            }
-            if (!swapped) {
-                break;
-            }
-        }
-        return array;
-    }
+//    public <T extends Comparable<T>> T[] BubbleSort(T[] array) {
+//        for (int i = 1, size = array.length; i < size; ++i) {
+//            boolean swapped = false;
+//            for (int j = 0; j < size - i; ++j) {
+//                if (greater(array[j], array[j + 1])) {
+//                    swap(array, j, j + 1);
+//                    swapped = true;
+//                }
+//            }
+//            if (!swapped) {
+//                break;
+//            }
+//        }
+//        return array;
+//    }
 
     public <T extends Comparable<T>> T[] SelectionSort(T[] arr) {
         int n = arr.length;
@@ -160,7 +162,7 @@ public class CFG4J_Test
         for (String str : list)
         {
             System.out.println("str = " + str);
-            int i = 5 + 10;
+            int p = 5 + 10;
         }
 
 //        do
@@ -200,8 +202,6 @@ public class CFG4J_Test
         float temp = 0;
 
         double x = temp + 10;
-
-        return x;
     }
 
 //    public void check (char a, int b, int c, int d)
@@ -251,26 +251,32 @@ public class CFG4J_Test
         return false;
     }
 
-    public void testSymbolicExecution(int x, char y, double z, boolean boo) {
-        int c, d = 10;
-        int[][] arr = {{1, 2, 3}, {1, 2, 3}};
-        int[][][] a = new int[10][20][10];
-        int c = 10 + x;
+    public void testSymbolicExecution(int x, int y) {
+        x = 2; y = -7;
+        double m = x / y / x / y;
+        int c, d = 12;
+        int[][] arr = {{1, 2, 3, 5}, {1, 2, 3, 4}};
+        int[][][] a = new int[d]['a'][5];
+        arr[0][1] = 10;
+        c = d++;
         int f = 6;
-        char b;
-        b = '5';
-        int a, b;
+//        char b;
+//        b = '5';
+        int b;
         {
-//            a = 22;
 //            b = 9;
         }
-        b = 8 + c;
-        y = 'b';
-        boo = false;
-//        if(x * b == a * 9 && x != 6 && b == 8) {
+        b = -6;
+        if(x <= 'a' >>> 1 && (d + y > 5)) {
+            d++;
+        }
+//        if(d != arr[1][2] + y) {
 //            System.out.println("abc");
 //        }
-        for(int i = 0; i < x; i = i + 1) {
+//        if(x << 2 == 40) {
+//            System.out.println("com");
+//        }
+        for(int i = 1; i < x; i++) {
             System.out.println(i);
         }
     }

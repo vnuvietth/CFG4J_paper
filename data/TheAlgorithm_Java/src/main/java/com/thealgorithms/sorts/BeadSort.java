@@ -1,4 +1,4 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
 
 //BeadSort Algorithm(wikipedia) : https://en.wikipedia.org/wiki/Bead_sort

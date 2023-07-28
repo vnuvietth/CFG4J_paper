@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.buffers;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.datastructures.buffers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;

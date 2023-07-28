@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.queues;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.queues;
 
 /**
  * A [deque](https://en.wikipedia.org/wiki/Double-ended_queue) is short for a

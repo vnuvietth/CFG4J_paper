@@ -1,4 +1,4 @@
-package com.thealgorithms.audiofilters;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.audiofilters;
 
 /**
  * N-Order IIR Filter Assumes inputs are normalized to [-1, 1]

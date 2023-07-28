@@ -1,4 +1,4 @@
-package com.thealgorithms.ciphers.a5;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.ciphers.a5;
 
 // Source http://www.java2s.com/example/java-utility-method/bitset/increment-bitset-bits-int-size-9fd84.html
 //package com.java2s;

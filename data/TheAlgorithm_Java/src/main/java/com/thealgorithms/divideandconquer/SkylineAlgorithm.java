@@ -1,4 +1,4 @@
-package com.thealgorithms.divideandconquer;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.divideandconquer;
 
 import java.util.ArrayList;
 import java.util.Comparator;

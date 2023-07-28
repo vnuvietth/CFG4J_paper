@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.lists;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.lists;
 
 /**
  * This class implements a DoublyLinkedList. This is done using the classes

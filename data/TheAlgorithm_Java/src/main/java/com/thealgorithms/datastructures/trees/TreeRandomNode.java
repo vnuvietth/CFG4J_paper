@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.trees;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.trees;
 
 /* Author : Suraj Kumar
   Github : https://github.com/skmodi649

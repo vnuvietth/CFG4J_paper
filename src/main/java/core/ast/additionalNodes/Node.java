@@ -3,8 +3,8 @@ package core.ast.additionalNodes;
 import core.cfg.CfgNode;
 
 public class Node {
-    CfgNode data;
-    Node next;
+    private CfgNode data;
+    private Node next;
 
     public Node(CfgNode data) {
         setData(data);

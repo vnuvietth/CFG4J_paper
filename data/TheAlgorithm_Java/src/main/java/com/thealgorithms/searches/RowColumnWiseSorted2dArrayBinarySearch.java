@@ -1,4 +1,4 @@
-package com.thealgorithms.searches;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.searches;
 
 import com.thealgorithms.devutils.searches.MatrixSearchAlgorithm;
 

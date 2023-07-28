@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.heaps;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.heaps;
 
 /**
  * Class for heap elements.<br>

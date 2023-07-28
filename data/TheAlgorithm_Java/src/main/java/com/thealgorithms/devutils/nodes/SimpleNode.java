@@ -1,4 +1,4 @@
-package com.thealgorithms.devutils.nodes;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.devutils.nodes;
 
 /**
  * Simple Node implementation that holds a reference to the next Node.

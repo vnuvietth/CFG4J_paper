@@ -1,4 +1,4 @@
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 /**
  * @author Kshitij VERMA (github.com/kv19971) LEVENSHTEIN DISTANCE dyamic

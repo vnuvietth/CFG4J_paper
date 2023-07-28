@@ -1,4 +1,4 @@
-package com.thealgorithms.devutils.nodes;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.devutils.nodes;
 
 import java.util.Collection;
 

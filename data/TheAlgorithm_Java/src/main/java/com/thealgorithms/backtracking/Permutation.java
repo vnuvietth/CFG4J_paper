@@ -1,4 +1,4 @@
-package com.thealgorithms.backtracking;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.backtracking;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.caches;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.datastructures.caches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

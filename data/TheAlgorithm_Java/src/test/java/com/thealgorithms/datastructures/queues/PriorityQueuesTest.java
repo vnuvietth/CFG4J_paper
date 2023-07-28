@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.queues;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.datastructures.queues;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

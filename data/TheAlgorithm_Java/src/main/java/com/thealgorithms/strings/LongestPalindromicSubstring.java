@@ -1,4 +1,4 @@
-package com.thealgorithms.strings;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.strings;
 
 // Longest Palindromic Substring
 import java.util.Scanner;

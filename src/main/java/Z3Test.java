@@ -321,7 +321,7 @@ class Z3Test
         ArithExpr yr = (ArithExpr) ctx.mkConst(ctx.mkSymbol("y"),
                 ctx.mkRealSort());
         Goal g4 = ctx.mkGoal(true, false, false);
-        g4.add(ctx.mkGt(xr, ctx.mkReal(10, 1)));
+        g4.add(ctx.mkGt(xr, ctx.mkReal("10.4456")));
         g4.add(ctx.mkEq(yr, ctx.mkAdd(xr, ctx.mkReal(1, 1))));
         g4.add(ctx.mkGt(yr, ctx.mkReal(1, 1)));
 
@@ -346,6 +346,8 @@ class Z3Test
         System.out.println("Model: \n" + s.getModel());
         if (q != Status.SATISFIABLE)
             throw new TestFailedException();
+
+        System.out.println("enddnnd");
     }
 
     // / A simple array example.
@@ -615,7 +617,7 @@ class Z3Test
 
         Expr body_vars = ctx.mkAnd(
                 ctx.mkEq(ctx.mkAdd(vars[0], ctx.mkInt(1)), ctx.mkInt(2)),
-                ctx.mkEq(ctx.mkAdd(vars[1], ctx.mkInt(2)),
+                ctx.mkEq(ctx.mkAdd(vars[1], ctx.mkInt(9)),
                         ctx.mkAdd(vars[2], ctx.mkInt(3))));
 
         Expr body_const = ctx.mkAnd(
@@ -1161,7 +1163,9 @@ class Z3Test
         IntExpr x = ctx.mkIntConst("x");
         IntExpr y = ctx.mkIntConst("y");
         IntExpr one = ctx.mkInt(1);
-        IntExpr two = ctx.mkInt(2);
+//        RealExpr one = ctx.mkReal("12.54352");
+//        IntExpr two = ctx.mkInt(2);
+        RealExpr two = ctx.mkReal("65.231234");
 
         ArithExpr y_plus_one = ctx.mkAdd(y, one);
 
@@ -1172,7 +1176,7 @@ class Z3Test
 
         System.out.println("model for: x < y + 1, x > 2");
         Model model = check(ctx, q, Status.SATISFIABLE);
-        System.out.println("x = " + model.evaluate(x, false) + ", y ="
+        System.out.println("x = " + model.evaluate(x, false) + ", y = "
                 + model.evaluate(y, false));
 
         /* assert not(x = y) */
@@ -1434,6 +1438,7 @@ class Z3Test
 
         /* find a model (i.e., values for x an y that satisfy the constraint */
         Model m = check(ctx, ctr, Status.SATISFIABLE);
+        System.out.println(m.evaluate(x, false));
         System.out.println(m);
     }
 
@@ -2268,12 +2273,14 @@ class Z3Test
         System.out.println(b);
         System.out.println(a.getSort());
         System.out.println(b.getSort());
-        Expr c = ctx.mkConcat(ctx.mkToRe(ctx.mkString("abc")),
+        Expr c = ctx.mkConcat(
+                ctx.mkToRe(ctx.mkString("abc")),
                 ctx.mkFullRe(ctx.mkReSort(ctx.mkStringSort())),
                 ctx.mkEmptyRe(ctx.mkReSort(ctx.mkStringSort())),
-                ctx.mkAllcharRe(ctx.mkReSort(ctx.mkStringSort())),
-                ctx.mkToRe(ctx.mkString("d")));
-        System.out.println(c);
+                ctx.mkAllcharRe(ctx.mkReSort(ctx.mkStringSort()))
+                ,
+                ctx.mkToRe(ctx.mkString("d"))
+        );
 
     }
 
@@ -2301,8 +2308,9 @@ class Z3Test
                 cfg.put("model", "true");
                 Context ctx = new Context(cfg);
 
-
+                System.out.println("optimize");
                 p.optimizeExample(ctx);
+                System.out.println("end optimize");
                 p.basicTests(ctx);
                 p.castingTest(ctx);
                 p.sudokuExample(ctx);

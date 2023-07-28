@@ -3,12 +3,11 @@ package core.ast.Expression;
 
 import core.ast.AstNode;
 import core.ast.Expression.Literal.LiteralNode;
+import core.ast.Expression.Literal.NumberLiteral.IntegerLiteralNode;
 import core.ast.Expression.Name.NameNode;
+import core.ast.Expression.OperationExpression.InfixExpressionNode;
 import core.dataStructure.MemoryModel;
-import org.eclipse.jdt.core.dom.ArrayAccess;
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.*;
 
 public class AssignmentNode extends ExpressionNode {
 
@@ -18,14 +17,16 @@ public class AssignmentNode extends ExpressionNode {
 
     public static void executeAssignment(Assignment assignment, MemoryModel memoryModel) {
         AssignmentNode assignmentNode = new AssignmentNode();
-        assignmentNode.rightHandSide = (ExpressionNode) ExpressionNode.executeExpression(assignment.getRightHandSide(), memoryModel);
         assignmentNode.operator = assignment.getOperator();
+        assignmentNode.rightHandSide = (ExpressionNode) ExpressionNode.executeExpression(assignment.getRightHandSide(), memoryModel);
+
+        ExpressionNode assignValue = analyzeAssignValue(assignmentNode.rightHandSide, assignmentNode.operator);
 
         Expression leftHandSide = assignment.getLeftHandSide();
 
         if(leftHandSide instanceof Name) {
             String key = NameNode.getStringName((Name) leftHandSide);
-            memoryModel.put(key, assignmentNode.rightHandSide);
+            memoryModel.assignVariable(key, assignValue);
         } else if(leftHandSide instanceof ArrayAccess){
             ArrayAccess arrayAccess = (ArrayAccess) leftHandSide;
 
@@ -43,11 +44,51 @@ public class AssignmentNode extends ExpressionNode {
                 arrayNode = (ArrayNode) ArrayAccessNode.executeArrayAccessNode((ArrayAccess) arrayExpression, memoryModel);
             } else if(arrayExpression instanceof Name){
                 String name = NameNode.getStringName((Name) arrayExpression);
-                arrayNode = (ArrayNode) memoryModel.get(name);
+                arrayNode = (ArrayNode) memoryModel.getValue(name);
             } else {
                 throw new RuntimeException("Can't execute ArrayAccess");
             }
-            arrayNode.set(assignmentNode.rightHandSide, index);
+            arrayNode.set(assignValue, index);
+        }
+    }
+
+    private static ExpressionNode analyzeAssignValue(ExpressionNode initialValue, Assignment.Operator assignmentOperator) {
+        InfixExpressionNode assignValue = new InfixExpressionNode();
+        assignValue.setLeftOperand(initialValue);
+        assignValue.setRightOperand(new IntegerLiteralNode(1));
+
+        if (assignmentOperator.equals(Assignment.Operator.ASSIGN)) {
+            return initialValue;
+        } else if(assignmentOperator.equals(Assignment.Operator.PLUS_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.PLUS);
+        } else if (assignmentOperator.equals(Assignment.Operator.MINUS_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.MINUS);
+        } else if (assignmentOperator.equals(Assignment.Operator.DIVIDE_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.DIVIDE);
+        } else if (assignmentOperator.equals(Assignment.Operator.TIMES_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.TIMES);
+        } else if (assignmentOperator.equals(Assignment.Operator.REMAINDER_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.REMAINDER);
+        } else if (assignmentOperator.equals(Assignment.Operator.BIT_OR_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.OR);
+        } else if (assignmentOperator.equals(Assignment.Operator.BIT_AND_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.AND);
+        } else if (assignmentOperator.equals(Assignment.Operator.BIT_XOR_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.XOR);
+        } else if (assignmentOperator.equals(Assignment.Operator.LEFT_SHIFT_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.LEFT_SHIFT);
+        } else if (assignmentOperator.equals(Assignment.Operator.RIGHT_SHIFT_UNSIGNED_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.RIGHT_SHIFT_UNSIGNED);
+        } else if (assignmentOperator.equals(Assignment.Operator.RIGHT_SHIFT_SIGNED_ASSIGN)) {
+            assignValue.setOperator(InfixExpression.Operator.RIGHT_SHIFT_SIGNED);
+        } else {
+            throw new RuntimeException("Invalid operator");
+        }
+
+        if(initialValue instanceof LiteralNode) {
+            return LiteralNode.analyzeTwoInfixLiteral((LiteralNode) initialValue, assignValue.getOperator(), (LiteralNode) assignValue.getRightOperand());
+        } else {
+            return assignValue;
         }
     }
 }

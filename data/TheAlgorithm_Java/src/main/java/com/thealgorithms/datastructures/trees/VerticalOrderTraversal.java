@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.trees;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.trees;
 
 import java.util.ArrayList;
 import java.util.HashMap;

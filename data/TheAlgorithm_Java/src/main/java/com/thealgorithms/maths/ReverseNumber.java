@@ -1,4 +1,4 @@
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 import java.lang.IllegalStateException;
 import java.util.NoSuchElementException;

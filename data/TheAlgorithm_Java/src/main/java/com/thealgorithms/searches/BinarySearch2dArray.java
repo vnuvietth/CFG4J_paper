@@ -1,4 +1,4 @@
-package com.thealgorithms.searches;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.searches;
 
 /*
 To apply this method, the provided array must be strictly sorted. In this method, two pointers, one at 0th row

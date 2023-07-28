@@ -1,4 +1,4 @@
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 /*
  * Algorithm explanation https://leetcode.com/problems/longest-palindromic-substring/

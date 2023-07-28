@@ -1,4 +1,4 @@
-package com.thealgorithms.divideandconquer;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.divideandconquer;
 
 /**
  * For a set of points in a coordinates system (10000 maximum), ClosestPair

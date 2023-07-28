@@ -11,7 +11,7 @@
 
 /** Program description - To find the Golomb sequence upto n */
 
-package com.thealgorithms.dynamicprogramming;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.dynamicprogramming;
 
 public class CountFriendsPairing {
 

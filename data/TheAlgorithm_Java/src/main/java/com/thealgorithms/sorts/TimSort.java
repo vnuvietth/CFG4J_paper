@@ -1,6 +1,6 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts;
 
-import static com.thealgorithms.sorts.SortUtils.less;
+import static data.TheAlgorithm_Java.src.main.java.com.thealgorithms.sorts.SortUtils.less;
 
 /**
  * This is simplified TimSort algorithm implementation. The original one is more complicated.

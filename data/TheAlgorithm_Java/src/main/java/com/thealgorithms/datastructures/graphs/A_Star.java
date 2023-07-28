@@ -1,7 +1,7 @@
 /*
 	Time Complexity = O(E), where E is equal to the number of edges
  */
-package com.thealgorithms.datastructures.graphs;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.graphs;
 
 import java.util.*;
 

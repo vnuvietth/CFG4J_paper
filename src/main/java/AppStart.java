@@ -3,18 +3,19 @@ import core.algorithms.SymbolicExecution;
 import core.cfg.CfgBlockNode;
 import core.cfg.CfgEndBlockNode;
 import core.cfg.CfgNode;
+import core.dataStructure.Mark;
 import core.dataStructure.Path;
 import core.parser.ASTHelper;
 import core.parser.ProjectParser;
 import core.utils.Utils;
+import data.child.CFG4J_Test;
 import org.eclipse.jdt.core.dom.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
@@ -23,8 +24,10 @@ public class AppStart {
     private static long totalUsedMem = 0;
     private static long tickCount = 0;
 
-    public static void main(String[] args) throws IOException {
-        String path = "data\\child\\CFG4J_Test.java";
+    public static List<String> statements;
+
+    public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String path = "src\\main\\java\\data\\child\\CFG4J_Test.java";
         System.out.println("Start parsing...");
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
 
@@ -55,6 +58,7 @@ public class AppStart {
 
                 LocalDateTime beforeTime = LocalDateTime.now();
 
+                // Generate CFG
                 Block functionBlock = Utils.getFunctionBlock(func);
 
                 CfgNode cfgBeginCfgNode = new CfgNode();
@@ -69,21 +73,31 @@ public class AppStart {
                 block.setBeforeStatementNode(cfgBeginCfgNode);
                 block.setAfterStatementNode(cfgEndCfgNode);
 
-                FindAllPath paths = new FindAllPath(ASTHelper.generateCFGFromASTBlockNode(block));
+                CfgNode cfgNode = ASTHelper.generateCFGFromASTBlockNode(block);
+                //===========================
 
+                // Find all paths
+                FindAllPath paths = new FindAllPath(cfgNode);
+                //============================
+
+                // Symbolic Execute
                 System.out.println("Number of paths: " + paths.getPaths().size());
                 Path testPath = paths.getPaths().get(0);
                 System.out.println(testPath);
                 SymbolicExecution solution = new SymbolicExecution(testPath, parameters);
+                //============================
 
-//                System.out.println(((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide());
-//                System.out.println(((InfixExpression)((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide()).getLeftOperand().getClass());
-//                testPath.symbolicExecution(((MethodDeclaration) func).parameters());
-//                for(Object node : ((InfixExpression)((Assignment)((ExpressionStatement)testPath.getBeginNode().getAst()).getExpression()).getRightHandSide()).extendedOperands()) {
-//                    System.out.println(node);
-//                    System.out.println(node.getClass());
-//                }
-
+                // Dynamic Execute
+                System.out.println("Dynamic Execute");
+                statements = new ArrayList<>();
+                Method m = CFG4J_Test.class.getDeclaredMethod("testSymbolicExecutionClone", int.class, int.class);
+                Object oj = m.invoke(null, 2 , 8);
+                if(Mark.check(testPath)) {
+                    System.out.println("Path is covered");
+                } else {
+                    System.out.println("Path is not covered");
+                }
+                //============================
 
                 LocalDateTime afterTime = LocalDateTime.now();
 

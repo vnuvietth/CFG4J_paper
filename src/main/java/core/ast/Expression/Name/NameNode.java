@@ -6,7 +6,7 @@ import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 
-public class NameNode extends ExpressionNode {
+public abstract class NameNode extends ExpressionNode {
 
     public static ExpressionNode executeName(Name name, MemoryModel memoryModel) {
         if(name instanceof SimpleName) {
@@ -29,6 +29,14 @@ public class NameNode extends ExpressionNode {
             return SimpleNameNode.getStringSimpleName((SimpleName) name);
         } else { /*name instanceof QualifiedName*/
             return QualifiedNameNode.getStringQualifiedName((QualifiedName) name);
+        }
+    }
+
+    public static String getStringNameNode(NameNode nameNode) {
+        if(nameNode instanceof SimpleNameNode) {
+            return SimpleNameNode.getStringSimpleNameNode((SimpleNameNode) nameNode);
+        } else { // nameNode instanceof QualifiedNameNode
+            return QualifiedNameNode.getStringQualifiedNameNode((QualifiedNameNode) nameNode);
         }
     }
 

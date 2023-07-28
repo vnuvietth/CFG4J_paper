@@ -1,4 +1,4 @@
-package com.thealgorithms.strings.zigZagPattern;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.strings.zigZagPattern;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.caches;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.caches;
 
 import java.util.HashMap;
 import java.util.Map;

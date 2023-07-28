@@ -1,4 +1,4 @@
-package com.thealgorithms.searches;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.searches;
 
 import org.junit.jupiter.api.Test;
 

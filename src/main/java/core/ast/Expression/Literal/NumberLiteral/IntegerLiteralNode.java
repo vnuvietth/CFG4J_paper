@@ -2,6 +2,13 @@ package core.ast.Expression.Literal.NumberLiteral;
 
 public class IntegerLiteralNode extends NumberLiteralNode {
 
+    public IntegerLiteralNode() {
+    }
+
+    public IntegerLiteralNode(int value) {
+        super.setTokenValue(String.valueOf(value));
+    }
+
     public static IntegerLiteralNode executeIntegerLiteral(int value) {
         IntegerLiteralNode integerLiteralNode = new IntegerLiteralNode();
         integerLiteralNode.setTokenValue(value);
@@ -33,4 +40,8 @@ public class IntegerLiteralNode extends NumberLiteralNode {
         super.setTokenValue(String.valueOf(integerValue));
     }
 
+    @Override
+    public String toString() {
+        return super.getTokenValue();
+    }
 }

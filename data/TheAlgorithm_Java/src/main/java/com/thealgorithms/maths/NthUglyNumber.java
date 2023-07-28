@@ -11,7 +11,7 @@
 // Select the minimum value from nm2, nm3, and nm5 and increment the pointer related to it.
 // Store the minimum value in variable next and array.
 // Return next.
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 import java.util.*;
 

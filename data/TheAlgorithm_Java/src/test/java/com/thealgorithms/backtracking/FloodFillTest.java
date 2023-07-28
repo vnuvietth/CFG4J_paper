@@ -1,4 +1,4 @@
-package com.thealgorithms.backtracking;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.backtracking;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 

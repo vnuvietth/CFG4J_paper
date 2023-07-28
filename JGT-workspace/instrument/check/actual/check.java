@@ -5,7 +5,7 @@ public class check {
             if (num % 5 == 0)
                 System.out.println("num=" + num);try{
                         //Specify the file name and path here
-                        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/actual/check.java.tracepath");
+                        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/actual/Test.java.tracepath");
                  
                         /* This logic is to create the file if the
                          * file is not already present
@@ -32,7 +32,7 @@ public class check {
             else
                 System.out.println("num=" + num);try{
                         //Specify the file name and path here
-                        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/actual/check.java.tracepath");
+                        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/actual/Test.java.tracepath");
                  
                         /* This logic is to create the file if the
                          * file is not already present
@@ -59,7 +59,7 @@ public class check {
         else
             System.out.println("num=" + num);try{
                     //Specify the file name and path here
-                    File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/actual/check.java.tracepath");
+                    File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/actual/Test.java.tracepath");
              
                     /* This logic is to create the file if the
                      * file is not already present
@@ -85,4 +85,4 @@ public class check {
             return false;
         }
     public static void main(String[] args) {new check().check(-435321010);}
-}
+}

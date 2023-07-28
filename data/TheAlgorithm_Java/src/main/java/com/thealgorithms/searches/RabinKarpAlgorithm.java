@@ -1,4 +1,4 @@
-package com.thealgorithms.searches;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.searches;
 
 // Following program is a Java implementation
 // of Rabin Karp Algorithm given in the CLRS book

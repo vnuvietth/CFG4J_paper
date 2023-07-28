@@ -3,7 +3,7 @@ public class check {
     public boolean check(int num) {
         try{
         //Specify the file name and path here
-        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/check.java.testpath");
+        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/Test.java.testpath");
  
         /* This logic is to create the file if the
          * file is not already present
@@ -29,7 +29,7 @@ public class check {
         if (num % 3 == 0)
             try{
         //Specify the file name and path here
-        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/check.java.testpath");
+        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/Test.java.testpath");
  
         /* This logic is to create the file if the
          * file is not already present
@@ -55,7 +55,7 @@ public class check {
             if (num % 5 == 0)
                 try{
         //Specify the file name and path here
-        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/check.java.testpath");
+        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/Test.java.testpath");
  
         /* This logic is to create the file if the
          * file is not already present
@@ -82,7 +82,7 @@ public class check {
             else
                 try{
         //Specify the file name and path here
-        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/check.java.testpath");
+        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/Test.java.testpath");
  
         /* This logic is to create the file if the
          * file is not already present
@@ -109,7 +109,7 @@ public class check {
         else
             try{
         //Specify the file name and path here
-        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/check.java.testpath");
+        File file =new File("C:/Users/haivt/Desktop/gen-test-main/JGT-workspace/instrument/check/Test.java.testpath");
  
         /* This logic is to create the file if the
          * file is not already present
@@ -135,4 +135,4 @@ public class check {
             return false;
         }
     public static void main(String[] args) {new check().check(-435321010);}
-}
+}

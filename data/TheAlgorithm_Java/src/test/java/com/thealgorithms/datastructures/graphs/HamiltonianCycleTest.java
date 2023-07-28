@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.graphs;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.datastructures.graphs;
 
 import static org.junit.jupiter.api.Assertions.*;
 

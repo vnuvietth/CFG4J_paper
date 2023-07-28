@@ -4,7 +4,7 @@
 //        and -2.7335 would be truncated to -2.
 //        My method used Long Division, here is the source "https://en.wikipedia.org/wiki/Long_division"
 
-package com.thealgorithms.maths;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.maths;
 
 public class LongDivision {
 public static int divide(int dividend, int divisor) {

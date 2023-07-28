@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.buffers;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.datastructures.buffers;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

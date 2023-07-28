@@ -1,4 +1,4 @@
-package com.thealgorithms.datastructures.bloomfilter;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.datastructures.bloomfilter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

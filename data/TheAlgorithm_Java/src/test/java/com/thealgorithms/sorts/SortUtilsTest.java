@@ -1,4 +1,4 @@
-package com.thealgorithms.sorts;
+package data.TheAlgorithm_Java.src.test.java.com.thealgorithms.sorts;
 
 import org.junit.jupiter.api.Test;
 

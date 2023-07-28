@@ -1,4 +1,4 @@
-package com.thealgorithms.devutils.searches;
+package data.TheAlgorithm_Java.src.main.java.com.thealgorithms.devutils.searches;
 
 /**
  * The common interface of most searching algorithms that search in matrixes.
