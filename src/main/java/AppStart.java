@@ -7,6 +7,7 @@ import core.dataStructure.Mark;
 import core.dataStructure.Path;
 import core.parser.ASTHelper;
 import core.parser.ProjectParser;
+import static core.testDriver.Utils.*;
 import core.utils.Utils;
 import data.child.CFG4J_Test;
 import org.eclipse.jdt.core.dom.*;
@@ -16,6 +17,8 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+
+
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
@@ -38,7 +41,7 @@ public class AppStart {
             {
                 System.out.println("func = " + ((MethodDeclaration)func).getName());
                 List<ASTNode> parameters = ((MethodDeclaration) func).parameters();
-                System.out.println("parameters.size() = " + ((MethodDeclaration) func).parameters().size());
+
 //                System.out.println(((SingleVariableDeclaration)((MethodDeclaration) func).parameters().get(0)).getName().getIdentifier());
 
                 Timer T = new Timer(true);
@@ -90,12 +93,27 @@ public class AppStart {
                 // Dynamic Execute
                 System.out.println("Dynamic Execute");
                 statements = new ArrayList<>();
-                Method m = CFG4J_Test.class.getDeclaredMethod("testSymbolicExecutionClone", int.class, int.class);
-                Object oj = m.invoke(null, 2 , 8);
+                Method m = CFG4J_Test.class.getDeclaredMethod("testSymbolicExecution", getParameterClasses(parameters));
+                int[] oneDArr = new int[] {1, 2, 3};
+                int[][] twoDArray = new int[][] {{1, 2}, {3, 4}};
+                int[][][] threeDArray = {
+                        {
+                                {1, 2, 3},
+                                {4, 5, 6},
+                                {7, 8, 9}
+                        },
+                        {
+                                {10, 11, 12},
+                                {13, 14, 15},
+                                {16, 17, 18}
+                        }
+                };
+                Object oj = m.invoke(null, 2, 5, threeDArray);
                 if(Mark.check(testPath)) {
                     System.out.println("Path is covered");
                 } else {
                     System.out.println("Path is not covered");
+
                 }
                 //============================
 
@@ -124,4 +142,5 @@ public class AppStart {
 //            e.printStackTrace();
 //        }
     }
+
 }
