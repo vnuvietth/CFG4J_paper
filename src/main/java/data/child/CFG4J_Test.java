@@ -275,7 +275,8 @@ public class CFG4J_Test
         return true;
     }
 
-    public static void testSymbolicExecution(int x, int y) {
+    public static void testSymbolicExecution(int x, int y, int[][][] testArr) {
+        System.out.println("Hello ");
         double m = 1;
         int d = 12;
         int[][] arr = {{1, 2, 3, 5}, {1, 2, 3, 4}};
