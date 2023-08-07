@@ -6,11 +6,11 @@ import core.cfg.CfgNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Mark {
+public final class MarkedPath {
 
     private static List<String> statements = new ArrayList<>();
 
-    private Mark(){}
+    private MarkedPath(){}
 
     public static void reset() {
         statements = new ArrayList<>();
@@ -40,4 +40,16 @@ public final class Mark {
         }
         return true;
     }
+
+
+    private static List<MarkedStatement> markedStatements = new ArrayList<>();
+
+    public static void tmpAdd(String statement, boolean isTrueCondition, boolean isFalseCondition) {
+        MarkedStatement markedStatement = new MarkedStatement(statement, isTrueCondition, isFalseCondition);
+        markedStatements.add(markedStatement);
+    }
+
+//    public static CfgNode check(CfgNode rootNode) {
+//
+//    }
 }

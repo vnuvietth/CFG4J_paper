@@ -36,6 +36,9 @@ public class ArrayCreationNode extends ExpressionNode {
         }
         if(dimension instanceof LiteralNode) {
             capacityOfDimension = LiteralNode.changeLiteralNodeToInteger((LiteralNode) dimension);
+        } else if (dimension instanceof NameNode) {
+            System.out.println("SYMBOLIC CAPACITY");
+            capacityOfDimension = 100; // SYMBOLIC CAPACITY
         } else {
             throw new RuntimeException("Can't execute Dimension");
         }

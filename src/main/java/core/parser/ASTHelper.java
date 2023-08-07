@@ -2,6 +2,8 @@ package core.parser;
 
 //import com.sun.istack.internal.NotNull;
 
+import core.ast.Expression.ExpressionNode;
+import core.ast.Expression.OperationExpression.InfixExpressionNode;
 import core.cfg.*;
 import core.utils.Utils;
 import org.eclipse.jdt.core.dom.*;
@@ -12,8 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-public class ASTHelper
-{
+public class ASTHelper {
 
     protected static List<String> primitiveTypes = Arrays.asList("boolean", "short", "int", "long", "float", "double", "void");
     protected static List<String> javaLangTypes = Arrays.asList("Boolean", "Byte", "Character.Subset", "Character.UnicodeBlock", "ClassLoader", "Double",
@@ -25,40 +26,29 @@ public class ASTHelper
     private static Stack<CfgNode> conditionNodeStack = new Stack<>(); // for continue statements
     private static CfgEndBlockNode endCfgNode = null; // for return statements
 
-    public static String getFullyQualifiedName(Type type, CompilationUnit cu)
-    {
-        if (type.isParameterizedType())
-        {
+    public static String getFullyQualifiedName(Type type, CompilationUnit cu) {
+        if (type.isParameterizedType()) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             return getFullyQualifiedTypeName(parameterizedType, cu);
-        }
-        else if (type.isArrayType())
-        {
+        } else if (type.isArrayType()) {
             ArrayType arrayType = (ArrayType) type;
             return getFullyQualifiedTypeName(arrayType, cu);
-        }
-        else
-        {
+        } else {
             return getFullyQualifiedTypeName(type.toString(), cu);
         }
     }
 
-    protected static String getFullyQualifiedTypeName(ParameterizedType parameterizedType, CompilationUnit cu)
-    {
+    protected static String getFullyQualifiedTypeName(ParameterizedType parameterizedType, CompilationUnit cu) {
         String result = "";
         String type = parameterizedType.getType().toString();
         result += getFullyQualifiedTypeName(type, cu) + "<";
 
         List args = parameterizedType.typeArguments();
-        if (args.size() == 1)
-        {
+        if (args.size() == 1) {
             String argQualifiedName = getFullyQualifiedTypeName(args.get(0).toString(), cu);
             result += argQualifiedName;
-        }
-        else
-        {
-            for (Object arg : args)
-            {
+        } else {
+            for (Object arg : args) {
                 String argQualifiedName = getFullyQualifiedTypeName(arg.toString(), cu);
                 result += argQualifiedName + ",";
             }
@@ -68,103 +58,73 @@ public class ASTHelper
         return result;
     }
 
-    protected static String getFullyQualifiedTypeName(ArrayType arrayType, CompilationUnit cu)
-    {
+    protected static String getFullyQualifiedTypeName(ArrayType arrayType, CompilationUnit cu) {
         String result = "";
         result += getFullyQualifiedTypeName(arrayType.getElementType().toString(), cu);
-        for (Object dimen : arrayType.dimensions())
-        {
+        for (Object dimen : arrayType.dimensions()) {
             result += dimen.toString();
         }
         return result;
     }
 
-    protected static String getFullyQualifiedTypeName(String typeName, CompilationUnit cu)
-    {
+    protected static String getFullyQualifiedTypeName(String typeName, CompilationUnit cu) {
         // input is null or input is already a fully qualified type
-        if (typeName == null || typeName.contains("."))
-        {
+        if (typeName == null || typeName.contains(".")) {
             return typeName;
         }
 
         // is primitive type?
-        if (primitiveTypes.contains(typeName))
-        {
+        if (primitiveTypes.contains(typeName)) {
             return typeName;
         }
 
         // find in import statements
-        for (Object o : cu.imports())
-        {
-            if (o instanceof ImportDeclaration)
-            {
+        for (Object o : cu.imports()) {
+            if (o instanceof ImportDeclaration) {
                 ImportDeclaration id = (ImportDeclaration) o;
                 String idStr = id.getName().getFullyQualifiedName();
-                if (idStr.endsWith("." + typeName))
-                {
+                if (idStr.endsWith("." + typeName)) {
                     return idStr;
                 }
             }
         }
 
         // find in java.lang package
-        if (javaLangTypes.contains(typeName))
-        {
+        if (javaLangTypes.contains(typeName)) {
             return "java.lang." + typeName;
         }
 
         PackageDeclaration packageDeclaration = cu.getPackage();
-        if (packageDeclaration == null)
-        {
+        if (packageDeclaration == null) {
             return typeName;
-        }
-        else
-        {
+        } else {
             return packageDeclaration.getName() + "." + typeName;
         }
     }
 
-    public static void generateCFGTreeFromASTNode(ASTNode astNode, CfgNode rootCFG)
-    {
+    public static void generateCFGTreeFromASTNode(ASTNode astNode, CfgNode rootCFG) {
 
         List<ASTNode> children = Utils.getChildren(astNode);
-        for (ASTNode node : children)
-        {
+        for (ASTNode node : children) {
             CfgNode cfgChild = null;
-            if (node instanceof IfStatement)
-            {
+            if (node instanceof IfStatement) {
                 cfgChild = new CfgIfStatementBlockNode();
-            }
-            else if (node instanceof TypeDeclaration || node instanceof MethodDeclaration)
-            {
+            } else if (node instanceof TypeDeclaration || node instanceof MethodDeclaration) {
                 cfgChild = new CfgStartNode();
-            }
-            else if (node instanceof FieldDeclaration)
-            {
+            } else if (node instanceof FieldDeclaration) {
                 cfgChild = new CfgNode();
-            }
-            else if (node instanceof Block)
-            {
+            } else if (node instanceof Block) {
                 cfgChild = new CfgBlockNode();
-            }
-            else if (node instanceof ExpressionStatement)
-            {
+            } else if (node instanceof ExpressionStatement) {
                 cfgChild = new CfgBoolExprNode();
-            }
-            else if (node instanceof Expression)
-            {
+            } else if (node instanceof Expression) {
                 cfgChild = new CfgExpressionNode();
-            }
-            else if (node instanceof ReturnStatement)
-            {
+            } else if (node instanceof ReturnStatement) {
                 cfgChild = new CfgReturnStatementNode();
-            }
-            else if (node instanceof VariableDeclarationStatement)
-            {
+            } else if (node instanceof VariableDeclarationStatement) {
                 cfgChild = new CfgNormalNode();
             }
-            if (cfgChild != null)
-            {
+            if (cfgChild != null) {
                 cfgChild.setContent(node.toString());
                 cfgChild.setStartPosition(node.getStartPosition());
                 cfgChild.setEndPosition(node.getStartPosition() + node.getLength());
@@ -178,8 +138,7 @@ public class ASTHelper
 
     }
 
-    public static CfgNode generateCFGFromASTBlockNode(CfgNode block)
-    {
+    public static CfgNode generateCFGFromASTBlockNode(CfgNode block) {
         CfgNode beginStatementNode = block.getBeforeStatementNode();
         CfgEndBlockNode endStatementNode = (CfgEndBlockNode) block.getAfterStatementNode();
 
@@ -189,50 +148,33 @@ public class ASTHelper
 
         CfgNode cfgRootNode = null;// = beginStatementNode;
 
-        if (block.getAst() instanceof Block)
-        {
+        if (block.getAst() instanceof Block) {
             //region Block processing
             List<ASTNode> statements = ((Block) block.getAst()).statements();
 
-            if (statements.size() > 0)
-            {
-                for (int i = 0; i < statements.size(); i++)
-                {
+            if (statements.size() > 0) {
+                for (int i = 0; i < statements.size(); i++) {
                     ASTNode statement = statements.get(i);
 
                     CfgNode currentNode = generateCFGForOneStatement(statement, beginStatementNode, endStatementNode);
 
-                    if (currentNode instanceof CfgBeginSwitchNode)
-                    {
-                        beginStatementNode = ((CfgBeginSwitchNode)currentNode).getEndBlockNode();
-                    }
-                    else if (currentNode instanceof CfgBoolExprNode)
-                    {
-                        beginStatementNode = ((CfgBoolExprNode)currentNode).getEndBlockNode();
-                    }
-                    else if (currentNode instanceof CfgBeginForNode)
-                    {
-                        beginStatementNode = ((CfgBeginForNode)currentNode).getEndBlockNode();
-                    }
-                    else if (currentNode instanceof CfgBeginDoNode)
-                    {
-                        beginStatementNode = ((CfgBeginDoNode)currentNode).getEndBlockNode();
-                    }
-                    else if (currentNode instanceof CfgBeginForEachNode)
-                    {
-                        beginStatementNode = ((CfgBeginForEachNode)currentNode).getEndBlockNode();
-                    }
-                    else if (currentNode instanceof CfgBeginBlockNode) 
-                    {
+                    if (currentNode instanceof CfgBeginSwitchNode) {
+                        beginStatementNode = ((CfgBeginSwitchNode) currentNode).getEndBlockNode();
+                    } else if (currentNode instanceof CfgBoolExprNode) {
+                        beginStatementNode = ((CfgBoolExprNode) currentNode).getEndBlockNode();
+                    } else if (currentNode instanceof CfgBeginForNode) {
+                        beginStatementNode = ((CfgBeginForNode) currentNode).getEndBlockNode();
+                    } else if (currentNode instanceof CfgBeginDoNode) {
+                        beginStatementNode = ((CfgBeginDoNode) currentNode).getEndBlockNode();
+                    } else if (currentNode instanceof CfgBeginForEachNode) {
+                        beginStatementNode = ((CfgBeginForEachNode) currentNode).getEndBlockNode();
+                    } else if (currentNode instanceof CfgBeginBlockNode) {
                         beginStatementNode = ((CfgBeginBlockNode) currentNode).getEndBlockNode();
-                    }
-                    else
-                    {
+                    } else {
                         beginStatementNode = currentNode;
                     }
 
-                    if (i == 0)
-                    {
+                    if (i == 0) {
                         cfgRootNode = currentNode;
                     }
 
@@ -242,9 +184,7 @@ public class ASTHelper
             //endregion Block processing
 
             return cfgRootNode;
-        }
-        else
-        {
+        } else {
             ASTNode statement = block.getAst();
 
             CfgNode currentNode = generateCFGForOneStatement(statement, beginStatementNode, endStatementNode);
@@ -258,11 +198,10 @@ public class ASTHelper
     //câu lệnh mới vào afterNode hay falseNode của beforeNode
     //Hàm trả ra là Nút tương ứng với câu lệnh đầu tiên và một danh sách tương ứng với câu lệnh cuối cùng của
     // khối lệnh mà đứng trước nút End của khối
-    public static CfgNode generateCFGForOneStatement(ASTNode statement, CfgNode beforeNode, CfgNode afterNode)
-    {
+    public static CfgNode generateCFGForOneStatement(ASTNode statement, CfgNode beforeNode, CfgNode afterNode) {
         CfgNode currentNode;
 
-        if(statement instanceof SwitchStatement) {
+        if (statement instanceof SwitchStatement) {
             currentNode = new CfgSwitchStatementBlockNode();
 
             currentNode.setAst(statement);
@@ -272,9 +211,7 @@ public class ASTHelper
             CfgBeginSwitchNode beginSwitchNode = generateCFGFromSwitchASTNode((CfgSwitchStatementBlockNode) currentNode);
 
             return beginSwitchNode;
-        }
-        else if (statement instanceof IfStatement)
-        {
+        } else if (statement instanceof IfStatement) {
             currentNode = new CfgIfStatementBlockNode();
 
             currentNode.setAst(statement);
@@ -286,9 +223,7 @@ public class ASTHelper
 //            System.out.println("beginIfNode = " + beginIfNode.toString());
 
             return beginIfNode;
-        }
-        else if (statement instanceof ForStatement)
-        {
+        } else if (statement instanceof ForStatement) {
             currentNode = new CfgForStatementBlockNode();
             currentNode.setAst(statement);
 
@@ -300,9 +235,7 @@ public class ASTHelper
 
             return beginForNode;
 
-        }
-        else if (statement instanceof EnhancedForStatement)
-        {
+        } else if (statement instanceof EnhancedForStatement) {
             //foreach statement
             currentNode = new CfgForEachStatementBlockNode();
             currentNode.setAst(statement);
@@ -316,9 +249,7 @@ public class ASTHelper
 
             return beginForEachNode;
 
-        }
-        else if (statement instanceof WhileStatement)
-        {
+        } else if (statement instanceof WhileStatement) {
             currentNode = new CfgWhileStatementBlockNode();
             currentNode.setAst(statement);
 
@@ -330,9 +261,7 @@ public class ASTHelper
 
             return beginWhileNode;
 
-        }
-        else if (statement instanceof DoStatement)
-        {
+        } else if (statement instanceof DoStatement) {
             currentNode = new CfgDoStatementBlockNode();
             currentNode.setAst(statement);
 
@@ -343,9 +272,7 @@ public class ASTHelper
 //            System.out.println("beginDoNode = " + beginDoNode.toString());
 
             return beginDoNode;
-        }
-        else if (statement instanceof Block)
-        {
+        } else if (statement instanceof Block) {
             // NEED FIXING (generateCFGFromBlockASTNode) !!!!!!!!!
             currentNode = new CfgBlockNode();
             currentNode.setAst(statement);
@@ -353,17 +280,13 @@ public class ASTHelper
             LinkCurrentNode(beforeNode, currentNode, afterNode);
             CfgBeginBlockNode cfgBeginBlockNode = generateCFGFromBlockASTNode((CfgBlockNode) currentNode);
             return cfgBeginBlockNode;
-        }
-        else if (statement instanceof ExpressionStatement)
-        {
+        } else if (statement instanceof ExpressionStatement) {
             currentNode = new CfgNormalNode();
 
             currentNode.setAst(statement);
 
             LinkCurrentNode(beforeNode, currentNode, afterNode);
-        }
-        else if (statement instanceof ReturnStatement)
-        {
+        } else if (statement instanceof ReturnStatement) {
             currentNode = new CfgReturnStatementNode();
 
             currentNode.setAst(statement);
@@ -378,16 +301,13 @@ public class ASTHelper
 
             // for controlling "BeforeEndBoolNodeList"
             afterNode.setBeforeStatementNode(currentNode);
-        }
-        else if (statement instanceof VariableDeclarationStatement)
-        {
+        } else if (statement instanceof VariableDeclarationStatement) {
             currentNode = new CfgNormalNode();
 
             currentNode.setAst(statement);
 
             LinkCurrentNode(beforeNode, currentNode, afterNode);
-        }
-        else if (statement instanceof BreakStatement) {
+        } else if (statement instanceof BreakStatement) {
             currentNode = new CfgBreakStatementNode();
 
             currentNode.setAst(statement);
@@ -401,8 +321,7 @@ public class ASTHelper
             // for controlling "BeforeEndBoolNodeList"
             afterNode.setBeforeStatementNode(currentNode);
 
-        }
-        else if (statement instanceof ContinueStatement) {
+        } else if (statement instanceof ContinueStatement) {
             currentNode = new CfgContinueStatementNode();
 
             currentNode.setAst(statement);
@@ -415,9 +334,7 @@ public class ASTHelper
 
             // for controlling "BeforeEndBoolNodeList"
             afterNode.setBeforeStatementNode(currentNode);
-        }
-        else
-        {
+        } else {
             currentNode = new CfgNormalNode();
 
             currentNode.setAst(statement);
@@ -433,8 +350,7 @@ public class ASTHelper
         return currentNode;
     }
 
-    private static void LinkCurrentNode(CfgNode beforeNode, CfgNode currentNode, CfgNode afterNode)
-    {
+    private static void LinkCurrentNode(CfgNode beforeNode, CfgNode currentNode, CfgNode afterNode) {
         beforeNode.setAfterStatementNode(currentNode);
         currentNode.setBeforeStatementNode(beforeNode);
 
@@ -451,7 +367,7 @@ public class ASTHelper
     // Just being used in "generateCFGFromIfASTNode"
     private static void addToBeforeEndBoolNodeList(CfgEndBlockNode cfgEndBlockNode) {
         CfgNode beforeNode = cfgEndBlockNode.getBeforeStatementNode();
-        if(!(beforeNode instanceof CfgReturnStatementNode ||
+        if (!(beforeNode instanceof CfgReturnStatementNode ||
                 beforeNode instanceof CfgBreakStatementNode ||
                 beforeNode instanceof CfgContinueStatementNode)) {
             cfgEndBlockNode.getBeforeEndBoolNodeList().add(cfgEndBlockNode.getBeforeStatementNode());
@@ -510,7 +426,7 @@ public class ASTHelper
                     LinkCurrentNode(previousNode, caseExpression, endNodeStack.peek());
                 }
                 // set falseNode
-                if(previousCaseNode != null) previousCaseNode.setFalseNode(caseExpression);
+                if (previousCaseNode != null) previousCaseNode.setFalseNode(caseExpression);
 
                 // update
                 previousCaseNode = caseExpression;
@@ -534,8 +450,7 @@ public class ASTHelper
         return beginSwitchNode;
     }
 
-    public static CfgBoolExprNode generateCFGFromIfASTNode(CfgIfStatementBlockNode ifCfgNode)
-    {
+    public static CfgBoolExprNode generateCFGFromIfASTNode(CfgIfStatementBlockNode ifCfgNode) {
         CfgNode beforeNode = ifCfgNode.getBeforeStatementNode();
         CfgEndBlockNode cfgEndBoolNode = new CfgEndBlockNode();
 
@@ -551,39 +466,162 @@ public class ASTHelper
         ifCondition.setAst(ifConditionAST);
         ifCondition.setContent(ifConditionAST.toString());
 
-        ifCondition.setBeforeStatementNode(beforeNode);
-        beforeNode.setAfterStatementNode(ifCondition);
+        CfgBoolExprNode currentCondition = ifCondition;
 
-        Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
-        CfgNode cfgThenNodeBlock = new CfgBlockNode();
-
-        cfgThenNodeBlock.setAst(thenAST);
-        cfgThenNodeBlock.setContent(thenAST.toString());
-
-        cfgThenNodeBlock.setBeforeStatementNode(ifCondition);
-
-        cfgThenNodeBlock.setAfterStatementNode(cfgEndBoolNode);
-
-        CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
-
-        // add to BeforeEndBoolNodeList
-        addToBeforeEndBoolNodeList(cfgEndBoolNode);
-
-        if(cfgThenNode == null) {
-            ifCondition.setTrueNode(cfgEndBoolNode);
+        if(isSeparableCondition(ifConditionAST)) {
+            ifCondition = separateCondition((InfixExpression) ifConditionAST, ((IfStatement) ifCfgNode.getAst()).getThenStatement(), beforeNode, cfgEndBoolNode);
+            currentCondition = ifCondition;
+            do {
+                currentCondition = (CfgBoolExprNode) currentCondition.getFalseNode();
+            } while (currentCondition.getFalseNode() instanceof CfgBoolExprNode);
         } else {
-            ifCondition.setTrueNode(cfgThenNode);
+            ifCondition.setBeforeStatementNode(beforeNode);
+            beforeNode.setAfterStatementNode(ifCondition);
+
+            Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
+            CfgNode cfgThenNodeBlock = new CfgBlockNode();
+
+            cfgThenNodeBlock.setAst(thenAST);
+            cfgThenNodeBlock.setContent(thenAST.toString());
+
+            cfgThenNodeBlock.setBeforeStatementNode(ifCondition);
+
+            cfgThenNodeBlock.setAfterStatementNode(cfgEndBoolNode);
+
+            CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
+
+            // add to BeforeEndBoolNodeList
+            addToBeforeEndBoolNodeList(cfgEndBoolNode);
+
+            if (cfgThenNode == null) {
+                ifCondition.setTrueNode(cfgEndBoolNode);
+            } else {
+                ifCondition.setTrueNode(cfgThenNode);
+            }
+            ifCondition.setEndBlockNode(cfgEndBoolNode);
         }
+
+//        if (ifConditionAST instanceof InfixExpression) {
+//            InfixExpression infixExpression = (InfixExpression) ifConditionAST;
+//            if (infixExpression.getOperator().equals(InfixExpression.Operator.CONDITIONAL_OR)) {
+//                Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
+//
+//                CfgBoolExprNode firstCondition = new CfgBoolExprNode();
+//                firstCondition.setAst(infixExpression.getLeftOperand());
+//                firstCondition.setContent(infixExpression.getLeftOperand().toString());
+//
+//                firstCondition.setBeforeStatementNode(beforeNode);
+//                beforeNode.setAfterStatementNode(firstCondition);
+//
+//                CfgNode fistThenBlock = new CfgBlockNode();
+//                fistThenBlock.setAst(thenAST);
+//                fistThenBlock.setContent(thenAST.toString());
+//                fistThenBlock.setBeforeStatementNode(firstCondition);
+//                fistThenBlock.setAfterStatementNode(cfgEndBoolNode);
+//
+//                CfgNode firstCfgThenNode = generateCFGFromASTBlockNode(fistThenBlock);
+//
+//                // add to BeforeEndBoolNodeList
+//                addToBeforeEndBoolNodeList(cfgEndBoolNode);
+//
+//                if (firstCfgThenNode == null) {
+//                    firstCondition.setTrueNode(cfgEndBoolNode);
+//                } else {
+//                    firstCondition.setTrueNode(firstCfgThenNode);
+//                }
+//                firstCondition.setEndBlockNode(cfgEndBoolNode);
+//
+//                CfgBoolExprNode secondCondition = new CfgBoolExprNode();
+//                secondCondition.setAst(infixExpression.getRightOperand());
+//                secondCondition.setContent(infixExpression.getRightOperand().toString());
+//
+//                secondCondition.setBeforeStatementNode(firstCfgThenNode);
+//                firstCondition.setFalseNode(secondCondition);
+//
+//
+//                CfgNode secondThenBlock = new CfgBlockNode();
+//                secondThenBlock.setAst(thenAST);
+//                secondThenBlock.setContent(thenAST.toString());
+//                secondThenBlock.setBeforeStatementNode(secondCondition);
+//                secondThenBlock.setAfterStatementNode(cfgEndBoolNode);
+//
+//                CfgNode secondCfgThenNode = generateCFGFromASTBlockNode(secondThenBlock);
+//
+//                // add to BeforeEndBoolNodeList
+//                addToBeforeEndBoolNodeList(cfgEndBoolNode);
+//
+//                if (firstCfgThenNode == null) {
+//                    secondCondition.setTrueNode(cfgEndBoolNode);
+//                } else {
+//                    secondCondition.setTrueNode(secondCfgThenNode);
+//                }
+//                secondCondition.setEndBlockNode(cfgEndBoolNode);
+//
+//                ifCondition = firstCondition;
+//                currentCondition = secondCondition;
+//            } else {
+//                ifCondition.setBeforeStatementNode(beforeNode);
+//                beforeNode.setAfterStatementNode(ifCondition);
+//
+//                Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
+//                CfgNode cfgThenNodeBlock = new CfgBlockNode();
+//
+//                cfgThenNodeBlock.setAst(thenAST);
+//                cfgThenNodeBlock.setContent(thenAST.toString());
+//
+//                cfgThenNodeBlock.setBeforeStatementNode(ifCondition);
+//
+//                cfgThenNodeBlock.setAfterStatementNode(cfgEndBoolNode);
+//
+//                CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
+//
+//                // add to BeforeEndBoolNodeList
+//                addToBeforeEndBoolNodeList(cfgEndBoolNode);
+//
+//                if (cfgThenNode == null) {
+//                    ifCondition.setTrueNode(cfgEndBoolNode);
+//                } else {
+//                    ifCondition.setTrueNode(cfgThenNode);
+//                }
+//                ifCondition.setEndBlockNode(cfgEndBoolNode);
+//            }
+//        }
+
+
+
+//        ifCondition.setBeforeStatementNode(beforeNode);
+//        beforeNode.setAfterStatementNode(ifCondition);
+//
+//        Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
+//        CfgNode cfgThenNodeBlock = new CfgBlockNode();
+//
+//        cfgThenNodeBlock.setAst(thenAST);
+//        cfgThenNodeBlock.setContent(thenAST.toString());
+//
+//        cfgThenNodeBlock.setBeforeStatementNode(ifCondition);
+//
+//        cfgThenNodeBlock.setAfterStatementNode(cfgEndBoolNode);
+//
+//        CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
+//
+//        // add to BeforeEndBoolNodeList
+//        addToBeforeEndBoolNodeList(cfgEndBoolNode);
+//
+//        if(cfgThenNode == null) {
+//            ifCondition.setTrueNode(cfgEndBoolNode);
+//        } else {
+//            ifCondition.setTrueNode(cfgThenNode);
+//        }
+//        ifCondition.setEndBlockNode(cfgEndBoolNode);
 
         Statement elseAST = ((IfStatement) ifCfgNode.getAst()).getElseStatement();
 
-        if (elseAST != null)
-        {
+        if (elseAST != null) {
             CfgNode cfgElseNodeBlock = new CfgBlockNode();
             cfgElseNodeBlock.setAst(elseAST);
             cfgElseNodeBlock.setContent(elseAST.toString());
 
-            cfgElseNodeBlock.setBeforeStatementNode(ifCondition);
+            cfgElseNodeBlock.setBeforeStatementNode(currentCondition); // latest
 
             cfgElseNodeBlock.setAfterStatementNode(cfgEndBoolNode);
 
@@ -592,16 +630,89 @@ public class ASTHelper
             // add to BeforeEndBoolNodeList
             addToBeforeEndBoolNodeList(cfgEndBoolNode);
 
-            ifCondition.setFalseNode(cfgElseNode);
-        }
-        else
-        {
-            ifCondition.setFalseNode(cfgEndBoolNode);
+            currentCondition.setFalseNode(cfgElseNode); // latest
+        } else {
+            currentCondition.setFalseNode(cfgEndBoolNode);// latest
         }
 
-        ifCondition.setEndBlockNode(cfgEndBoolNode);
+        return ifCondition; // first
+    }
 
-        return ifCondition;
+    private static CfgBoolExprNode separateCondition(InfixExpression infixExpression, Statement thenAST, CfgNode beforeNode, CfgEndBlockNode cfgEndBoolNode) {
+        if (infixExpression.getOperator().equals(InfixExpression.Operator.CONDITIONAL_OR)) {
+            CfgBoolExprNode firstCondition = new CfgBoolExprNode();
+            firstCondition.setAst(infixExpression.getLeftOperand());
+            firstCondition.setContent(infixExpression.getLeftOperand().toString());
+
+            firstCondition.setBeforeStatementNode(beforeNode);
+            beforeNode.setAfterStatementNode(firstCondition);
+
+            CfgNode fistThenBlock = new CfgBlockNode();
+            fistThenBlock.setAst(thenAST);
+            fistThenBlock.setContent(thenAST.toString());
+            fistThenBlock.setBeforeStatementNode(firstCondition);
+            fistThenBlock.setAfterStatementNode(cfgEndBoolNode);
+
+            CfgNode firstCfgThenNode = generateCFGFromASTBlockNode(fistThenBlock);
+
+            // add to BeforeEndBoolNodeList
+            addToBeforeEndBoolNodeList(cfgEndBoolNode);
+
+            if (firstCfgThenNode == null) {
+                firstCondition.setTrueNode(cfgEndBoolNode);
+            } else {
+                firstCondition.setTrueNode(firstCfgThenNode);
+            }
+            firstCondition.setEndBlockNode(cfgEndBoolNode);
+
+            CfgBoolExprNode secondCondition = new CfgBoolExprNode();
+            secondCondition.setAst(infixExpression.getRightOperand());
+            secondCondition.setContent(infixExpression.getRightOperand().toString());
+
+            secondCondition.setBeforeStatementNode(firstCfgThenNode);
+            firstCondition.setFalseNode(secondCondition);
+
+
+            CfgNode secondThenBlock = new CfgBlockNode();
+            secondThenBlock.setAst(thenAST);
+            secondThenBlock.setContent(thenAST.toString());
+            secondThenBlock.setBeforeStatementNode(secondCondition);
+            secondThenBlock.setAfterStatementNode(cfgEndBoolNode);
+
+            CfgNode secondCfgThenNode = generateCFGFromASTBlockNode(secondThenBlock);
+
+            // add to BeforeEndBoolNodeList
+            addToBeforeEndBoolNodeList(cfgEndBoolNode);
+
+            if (firstCfgThenNode == null) {
+                secondCondition.setTrueNode(cfgEndBoolNode);
+            } else {
+                secondCondition.setTrueNode(secondCfgThenNode);
+            }
+            secondCondition.setEndBlockNode(cfgEndBoolNode);
+
+//            Expression leftOperand = infixExpression.getLeftOperand();
+//            Expression rightOperand = infixExpression.getRightOperand();
+//            if(isSeparableCondition(leftOperand)) {
+//                separateCondition((InfixExpression) leftOperand, thenAST, secondCondition, cfgEndBoolNode);
+//            }
+//            if(isSeparableCondition(rightOperand)) {
+//                separateCondition((InfixExpression) rightOperand, thenAST, secondCondition, cfgEndBoolNode);
+//            }
+
+            return firstCondition;
+        } else {
+            return null;
+        }
+    }
+
+    private static boolean isSeparableCondition(Expression condition) {
+        if(condition instanceof InfixExpression) {
+            InfixExpression infixExpression = (InfixExpression) condition;
+            InfixExpression.Operator operator = infixExpression.getOperator();
+            return InfixExpressionNode.isConditionalOperator(operator) || InfixExpressionNode.isBooleanBitwiseOperator(operator);
+        }
+        return false;
     }
 
     private static CfgBeginBlockNode generateCFGFromBlockASTNode(CfgBlockNode cfgBlockNode) {
@@ -623,17 +734,16 @@ public class ASTHelper
 
         CfgNode bodyNode = generateCFGFromASTBlockNode(cfgBlockNode);
 
-        if(bodyNode != null) {
+        if (bodyNode != null) {
             beginBlockNode.setAfterStatementNode(bodyNode);
         } else {
             beginBlockNode.setAfterStatementNode(cfgEndBlockNode);
         }
-        
+
         return beginBlockNode;
     }
 
-    public static CfgBeginForNode generateCFGFromForASTNode(CfgForStatementBlockNode forCfgNode)
-    {
+    public static CfgBeginForNode generateCFGFromForASTNode(CfgForStatementBlockNode forCfgNode) {
 //        System.out.println("generateCFGFromForASTNode starts...");
         CfgNode beforeNode = forCfgNode.getBeforeStatementNode();
         CfgBeginForNode beginForNode = new CfgBeginForNode();
@@ -656,16 +766,12 @@ public class ASTHelper
 
         for (int i = 0;
              i < initializers.size();
-             i++)
-        {
+             i++) {
             CfgNormalNode normalNode = new CfgNormalNode();
 
-            if (initializers.get(i) instanceof VariableDeclarationExpression)
-            {
+            if (initializers.get(i) instanceof VariableDeclarationExpression) {
                 normalNode.setAst((VariableDeclarationExpression) initializers.get(i));
-            }
-            else if (initializers.get(i) instanceof Assignment)
-            {
+            } else if (initializers.get(i) instanceof Assignment) {
                 normalNode.setAst((Assignment) initializers.get(i));
             }
 
@@ -696,16 +802,12 @@ public class ASTHelper
 
         CfgNode firstUpdaterNode = null;
 
-        for (int i = 0; i < updaters.size(); i++)
-        {
+        for (int i = 0; i < updaters.size(); i++) {
             CfgNormalNode normalNode = new CfgNormalNode();
 
-            if (updaters.get(i) instanceof PostfixExpression)
-            {
+            if (updaters.get(i) instanceof PostfixExpression) {
                 normalNode.setAst((PostfixExpression) updaters.get(i));
-            }
-            else if (updaters.get(i) instanceof Assignment)
-            {
+            } else if (updaters.get(i) instanceof Assignment) {
                 normalNode.setAst((Assignment) updaters.get(i));
             }
 
@@ -713,8 +815,7 @@ public class ASTHelper
 
             tempBeforeUpdaterNode = normalNode;
 
-            if (i == 0)
-            {
+            if (i == 0) {
                 firstUpdaterNode = normalNode;
             }
         }
@@ -741,7 +842,7 @@ public class ASTHelper
         endNodeStack.pop();
         conditionNodeStack.pop();
 
-        if(cfgBodyNode == null) {
+        if (cfgBodyNode == null) {
             forConditionNode.setTrueNode(endBodyBlockNode);
         } else {
             forConditionNode.setTrueNode(cfgBodyNode);
@@ -756,8 +857,7 @@ public class ASTHelper
         return beginForNode;
     }
 
-    public static CfgBoolExprNode generateCFGFromWhileASTNode(CfgWhileStatementBlockNode whileCfgNode)
-    {
+    public static CfgBoolExprNode generateCFGFromWhileASTNode(CfgWhileStatementBlockNode whileCfgNode) {
 //        System.out.println("generateCFGFromWhileASTNode starts...");
         CfgNode beforeNode = whileCfgNode.getBeforeStatementNode();
 
@@ -805,7 +905,7 @@ public class ASTHelper
         endNodeStack.pop();
         conditionNodeStack.pop();
 
-        if(cfgBodyNode != null) {
+        if (cfgBodyNode != null) {
             whileConditionNode.setTrueNode(cfgBodyNode);
         } else {
             whileConditionNode.setTrueNode(endBodyBlockNode);
@@ -820,8 +920,7 @@ public class ASTHelper
         return whileConditionNode;
     }
 
-    public static CfgBeginDoNode generateCFGFromDoASTNode(CfgDoStatementBlockNode doCfgNode)
-    {
+    public static CfgBeginDoNode generateCFGFromDoASTNode(CfgDoStatementBlockNode doCfgNode) {
 //        System.out.println("generateCFGFromDoASTNode starts...");
         CfgNode beforeNode = doCfgNode.getBeforeStatementNode();
 
@@ -873,7 +972,7 @@ public class ASTHelper
         // pop from stack to delete finished "do-while" block
         endNodeStack.pop();
 
-        if(cfgBodyNode != null) {
+        if (cfgBodyNode != null) {
             doConditionNode.setTrueNode(cfgBodyNode);
         } else {
             doConditionNode.setTrueNode(endBodyBlockNode);
@@ -888,8 +987,7 @@ public class ASTHelper
         return beginDoNode;
     }
 
-    public static CfgBeginForEachNode generateCFGFromForEachASTNode(CfgForEachStatementBlockNode forEachCfgNode)
-    {
+    public static CfgBeginForEachNode generateCFGFromForEachASTNode(CfgForEachStatementBlockNode forEachCfgNode) {
 //        System.out.println("generateCFGFromForEachASTNode starts...");
         CfgNode beforeNode = forEachCfgNode.getBeforeStatementNode();
 
@@ -948,7 +1046,7 @@ public class ASTHelper
         endNodeStack.pop();
         conditionNodeStack.pop();
 
-        if(cfgBodyNode != null) {
+        if (cfgBodyNode != null) {
             expressionNode.setHasElementAfterNode(cfgBodyNode);
         } else {
             expressionNode.setHasElementAfterNode(endBodyBlockNode);

@@ -1,11 +1,9 @@
 package data.child;
 
-import core.dataStructure.Mark;
+import core.dataStructure.MarkedPath;
+import core.dataStructure.MarkedStatement;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CFG4J_Test
@@ -233,7 +231,7 @@ public class CFG4J_Test
 ////        return f;
 //    }
 
-    public boolean LeapYear(int year)
+    public static boolean LeapYear(int year)
     {
         // If a year is multiple of 400,
         // then it is a leap year
@@ -270,8 +268,8 @@ public class CFG4J_Test
 //        return true;
 //    }
 
-    private static boolean mark(String statement) {
-        Mark.add(statement);
+    private static boolean Mark(String statement) {
+        MarkedPath.add(statement);
         return true;
     }
 
@@ -283,7 +281,7 @@ public class CFG4J_Test
         arr[0][0] = 10;
         arr[0] = new int[3];
         double f = 6;
-        if((x < 1 || x < d++) && y < 6) {
+        if(x < 10) {
             System.out.println(d);
         }
         for(int i = 1; i < x; i += 1) {
@@ -291,32 +289,77 @@ public class CFG4J_Test
         }
     }
 
-    public static void testSymbolicExecutionClone(int x, int y) {
-        mark("double m=1;\n");
+    private static boolean tmpMark(String statement, boolean isTrueCondition, boolean isFalseCondition) {
+        MarkedPath.tmpAdd(statement, isTrueCondition, isFalseCondition);
+        if(!isTrueCondition && !isFalseCondition) return true;
+        return !isFalseCondition;
+    }
+
+//    public static void testSymbolicExecutionClone(int x, int y) {
+//        mark("double m=1;\n");
+//        double m = 1;
+//        mark("int d=12;\n");
+//        int d = 12;
+//        mark("int[][] arr={{1,2,3,5},{1,2,3,4}};\n");
+//        int[][] arr = {{1, 2, 3, 5}, {1, 2, 3, 4}};
+//        mark("int[][][] a=new int[d]['a'][5];\n");
+//        int[][][] a = new int[d]['a'][5];
+//        mark("arr[0][0]=10;\n");
+//        arr[0][0] = 10;
+//        mark("arr[0]=new int[3];\n");
+//        arr[0] = new int[3];
+//        mark("double f=6;\n");
+//        double f = 6;
+//        if(x < 10 && mark("x < 10")) {
+//            mark("System.out.println(d);\n");
+//            System.out.println(d);
+//        }
+//        mark("int i=1");
+//        for(int i = 1; (i < x) && mark("i < x"); mark("i+=1"), i += 1) {
+//            mark("System.out.println(i);\n");
+//            System.out.println(i);
+//        }
+//    }
+
+        public static void testSymbolicExecutionClone(int x, int y) {
+        tmpMark("double m=1;\n", false, false);
         double m = 1;
-        mark("int d=12;\n");
+        tmpMark("int d=12;\n", false, false);
         int d = 12;
-        mark("int[][] arr={{1,2,3,5},{1,2,3,4}};\n");
+        tmpMark("int[][] arr={{1,2,3,5},{1,2,3,4}};\n", false, false);
         int[][] arr = {{1, 2, 3, 5}, {1, 2, 3, 4}};
-        mark("int[][][] a=new int[d]['a'][5];\n");
+        tmpMark("int[][][] a=new int[d]['a'][5];\n", false, false);
         int[][][] a = new int[d]['a'][5];
-        mark("arr[0][0]=10;\n");
+        tmpMark("arr[0][0]=10;\n", false, false);
         arr[0][0] = 10;
-        mark("arr[0]=new int[3];\n");
+        tmpMark("arr[0]=new int[3];\n", false, false);
         arr[0] = new int[3];
-        mark("double f=6;\n");
+        tmpMark("double f=6;\n", false, false);
         double f = 6;
-        if(((x < 1 || x < d++) && y < 6) && mark("(x < 1 || x < d++) && y < 6")) {
-            mark("System.out.println(d);\n");
+        if((x < 10 && tmpMark("x < 10", true, false)) || tmpMark("x < 10", false, true)) {
+            tmpMark("System.out.println(d);\n", false, false);
             System.out.println(d);
         }
-        mark("int i=1");
-        for(int i = 1; (i < x) && mark("i < x"); mark("i+=1"), i += 1) {
-            mark("System.out.println(i);\n");
+        tmpMark("int i=1", false, false);
+        for(int i = 1; (i < x && tmpMark("i < x", true, false)) || tmpMark("i < x", false, true); tmpMark("i+=1", false, false), i += 1) {
+            tmpMark("System.out.println(i);\n", false, false);
             System.out.println(i);
         }
     }
 
+    public void function(boolean A, boolean B, boolean C, int x) {
+//        if(A) {
+//            System.out.println(); // Statement A
+//        }
+//        if(B) {
+//            System.out.println(); // Statement B
+//        } else if(C) {
+//            System.out.println(); // Statement C
+//        }
+        for(int i = 0; i < x; i++) {
+            System.out.println(i);
+        }
+    }
     public void testForEachLoop(ArrayList<String> s) {
         for(String i : s) {
             System.out.println("hi" + i);

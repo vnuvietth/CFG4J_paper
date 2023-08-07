@@ -109,7 +109,7 @@ public abstract class OperationExpressionNode extends ExpressionNode {
         } else if (operand instanceof NameNode) {
             return NameNode.executeNameNode((NameNode) operand, memoryModel);
         } else {
-            throw new RuntimeException("Invalid expressionNode");
+            throw new RuntimeException(operand.getClass() + " is Invalid expressionNode");
         }
     }
 }

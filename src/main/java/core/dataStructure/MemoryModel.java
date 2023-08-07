@@ -1,6 +1,7 @@
 package core.dataStructure;
 
 import core.ast.AstNode;
+import core.ast.Expression.Name.NameNode;
 import core.variable.ArrayTypeVariable;
 import core.variable.PrimitiveTypeVariable;
 import core.variable.Variable;
@@ -41,6 +42,16 @@ public class MemoryModel { // ONLY FOR PRIMITIVE TYPES!!!!
             }
         }
         throw new RuntimeException("There's no variable with name: " + name + " in memory model!");
+    }
+
+    public AstNode getValue(NameNode nameNode) {
+        String name = NameNode.getStringNameNode(nameNode);
+        for (Map.Entry<Variable, AstNode> set : S.entrySet()) {
+            if (set.getKey().getName().equals(name)) {
+                return set.getValue();
+            }
+        }
+        return nameNode;
     }
 
     public Variable getVariable(String name) {

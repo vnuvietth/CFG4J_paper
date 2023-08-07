@@ -3,12 +3,11 @@ import core.algorithms.SymbolicExecution;
 import core.cfg.CfgBlockNode;
 import core.cfg.CfgEndBlockNode;
 import core.cfg.CfgNode;
-import core.dataStructure.Mark;
+import core.dataStructure.MarkedPath;
 import core.dataStructure.Path;
 import core.parser.ASTHelper;
 import core.parser.ProjectParser;
 import core.utils.Utils;
-import data.child.CFG4J_Test;
 import org.eclipse.jdt.core.dom.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -24,17 +23,17 @@ public class AppStart {
     private static long totalUsedMem = 0;
     private static long tickCount = 0;
 
-    public static List<String> statements;
-
-    public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         String path = "src\\main\\java\\data\\child\\CFG4J_Test.java";
         System.out.println("Start parsing...");
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
 
         System.out.println("count = " + funcAstNodeList.size());
 
+        String methodName = "testSymbolicExecution";
+
         for (ASTNode func : funcAstNodeList) {
-            if (((MethodDeclaration)func).getName().getIdentifier().equals("testSymbolicExecution"))
+            if (((MethodDeclaration)func).getName().getIdentifier().equals(methodName))
             {
                 System.out.println("func = " + ((MethodDeclaration)func).getName());
                 List<ASTNode> parameters = ((MethodDeclaration) func).parameters();
@@ -88,14 +87,14 @@ public class AppStart {
                 //============================
 
                 // Dynamic Execute
+//                methodName = methodName + "Clone";
                 System.out.println("Dynamic Execute");
-                statements = new ArrayList<>();
-                Method m = CFG4J_Test.class.getDeclaredMethod("testSymbolicExecutionClone", int.class, int.class);
-                Object oj = m.invoke(null, 2 , 8);
-                if(Mark.check(testPath)) {
-                    System.out.println("Path is covered");
+                Method m = Class.forName("data.child.CFG4J_Test").getDeclaredMethod(methodName, int.class, int.class);
+                m.invoke(null, 2, 1);
+                if(MarkedPath.check(testPath)) {
+                    System.out.println("PATH IS COVERED");
                 } else {
-                    System.out.println("Path is not covered");
+                    System.out.println("PATH IS NOT COVERED");
                 }
                 //============================
 
@@ -106,6 +105,8 @@ public class AppStart {
                 float diff = Math.abs((float) duration.toMillis());
 
                 T.cancel();
+
+                break;
 
 //                System.out.println("func = " + ((MethodDeclaration)func).getName());
 //                System.out.println("used time = " + diff + " ms");

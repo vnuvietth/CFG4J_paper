@@ -7,6 +7,13 @@ import org.eclipse.jdt.core.dom.SimpleName;
 public class SimpleNameNode extends NameNode {
     private String identifier = "MISSING";
 
+    public SimpleNameNode() {
+    }
+
+    public SimpleNameNode(String identifier) {
+        this.identifier = identifier;
+    }
+
     public static ExpressionNode executeSimpleName(SimpleName simpleName, MemoryModel memoryModel) {
         SimpleNameNode simpleNameNode = new SimpleNameNode();
         simpleNameNode.identifier = simpleName.getIdentifier();
@@ -15,7 +22,7 @@ public class SimpleNameNode extends NameNode {
     }
 
     public static ExpressionNode executeSimpleNameNode(SimpleNameNode simpleNameNode, MemoryModel memoryModel) {
-        return (ExpressionNode) memoryModel.getValue(simpleNameNode.identifier);
+        return (ExpressionNode) memoryModel.getValue(simpleNameNode);
     }
 
     public static String getStringSimpleName(SimpleName simpleName) {

@@ -30,7 +30,7 @@ public final class SymbolicExecution {
         Context ctx = new Context(cfg);
 
         for (ASTNode astNode : parameters) {
-            AstNode.executeASTNode(astNode, this.memoryModel);
+            AstNode.executeASTNode(astNode, memoryModel);
         }
 
         Node currentNode = testPath.getBeginNode();
@@ -125,6 +125,9 @@ public final class SymbolicExecution {
             System.out.println("RESULT OF EVALUATION:");
             for (Expr var : vars) {
                 System.out.println(var.toString() + " = " + model.evaluate(var, false));
+                if(model.evaluate(var, false) instanceof IntNum) {
+                    ((IntNum) model.evaluate(var, false)).getInt();
+                }
             }
         }
     }
