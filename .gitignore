@@ -4,3 +4,4 @@ test.log
 .idea/libraries/bin.xml
 test.log
 .idea/misc.xml
+*.xml
