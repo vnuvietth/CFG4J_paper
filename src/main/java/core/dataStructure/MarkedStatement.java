@@ -22,4 +22,16 @@ public class MarkedStatement {
     public void setFalseConditionalStatement(boolean falseConditionalStatement) {
         isFalseConditionalStatement = falseConditionalStatement;
     }
+
+    public String getStatement() {
+        return statement;
+    }
+
+    public boolean isTrueConditionalStatement() {
+        return isTrueConditionalStatement;
+    }
+
+    public boolean isFalseConditionalStatement() {
+        return isFalseConditionalStatement;
+    }
 }

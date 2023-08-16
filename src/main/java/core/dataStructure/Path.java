@@ -2,31 +2,34 @@ package core.dataStructure;
 
 import core.ast.additionalNodes.Node;
 import core.cfg.*;
-import org.eclipse.jdt.core.dom.*;
-
-import java.util.*;
 
 public class Path {
 
-    private Node beginNode;
+    private Node currentFirst;
 
-    private Node currentNode;
+    private Node currentLast;
 
     public boolean isEmpty() {
-        return beginNode == null;
+        return currentFirst == null;
     }
 
-    public void addNextNode(CfgNode data) {
-        Node previousNode = currentNode;
-        currentNode = new Node(data);
-        if (isEmpty()) beginNode = currentNode;
-        else previousNode.setNext(currentNode);
+    public void addLast(CfgNode data) {
+        Node lastNode = currentLast;
+        currentLast = new Node(data);
+        if (isEmpty()) currentFirst = currentLast;
+        else lastNode.setNext(currentLast);
+    }
+
+    public void addFirst(CfgNode data) {
+        Node newNode = new Node(data);
+        newNode.setNext(currentFirst);
+        currentFirst = newNode;
     }
 
     @Override
     public String toString() {
         StringBuilder p = new StringBuilder("===============\n");
-        Node tmpNode = beginNode;
+        Node tmpNode = currentFirst;
         while (tmpNode != null) {
             p.append(tmpNode.getData().toString());
             p.append("\n");
@@ -36,12 +39,12 @@ public class Path {
         return p.toString();
     }
 
-    public CfgNode getBeginCfgNode() {
-        return beginNode.getData();
+    public Node getCurrentFirst() {
+        return currentFirst;
     }
 
-    public Node getBeginNode() {
-        return beginNode;
+    public Node getCurrentLast() {
+        return currentLast;
     }
 }
 

@@ -23,6 +23,8 @@ public class CfgNode
 
     private String content = "";
 
+    private boolean isMarked = false;
+
     public CfgNode(ASTNode ast)
     {
         this.ast = ast;
@@ -283,5 +285,13 @@ public class CfgNode
     public void setIsEndCfgNode(boolean isEndCfgNode)
     {
         this.isEndCfgNode = isEndCfgNode;
+    }
+
+    public boolean isMarked() {
+        return isMarked;
+    }
+
+    public void setMarked(boolean marked) {
+        isMarked = marked;
     }
 }

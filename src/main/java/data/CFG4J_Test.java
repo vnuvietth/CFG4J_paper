@@ -1,15 +1,12 @@
-package data.child;
+package data;
 
 import core.dataStructure.MarkedPath;
-import core.dataStructure.MarkedStatement;
+import core.dataStructure.MarkedPathV2;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class CFG4J_Test
-{
-    public CFG4J_Test()
-    {
+public class CFG4J_Test {
+    public CFG4J_Test() {
     }
 
     public static int BinaryPower(int a, int p) {
@@ -102,6 +99,7 @@ public class CFG4J_Test
         return -1;
         /* not found */
     }
+
     public <T extends Comparable<T>> int FibonacciSearch(T[] array, T key) {
         int fibMinus1 = 1;
         int fibMinus2 = 0;
@@ -140,12 +138,9 @@ public class CFG4J_Test
         return -1;
     }
 
-    public <T extends Comparable<T>> int LinearSearch(T[] array, T value)
-    {
-        for (int i = 0; i < array.length; i++)
-        {
-            if (array[i].compareTo(value) == 0)
-            {
+    public <T extends Comparable<T>> int LinearSearch(T[] array, T value) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].compareTo(value) == 0) {
                 return i;
             }
         }
@@ -153,8 +148,7 @@ public class CFG4J_Test
     }
 
 
-    public void foo(char a, int b, int c, int d)
-    {
+    public void foo(char a, int b, int c, int d) {
         int i = 0;
         int j = 0;
 
@@ -162,8 +156,7 @@ public class CFG4J_Test
         list.add("hello");
         list.add("world");
 
-        for (String str : list)
-        {
+        for (String str : list) {
             System.out.println("str = " + str);
             int p = 5 + 10;
         }
@@ -231,8 +224,7 @@ public class CFG4J_Test
 ////        return f;
 //    }
 
-    public static boolean LeapYear(int year)
-    {
+    public static boolean LeapYear(int year) {
         // If a year is multiple of 400,
         // then it is a leap year
         if (year % 400 == 0) {
@@ -268,31 +260,30 @@ public class CFG4J_Test
 //        return true;
 //    }
 
-    private static boolean Mark(String statement) {
-        MarkedPath.add(statement);
-        return true;
-    }
+//    private static boolean Mark(String statement) {
+//        MarkedPath.add(statement);
+//        return true;
+//    }
 
     public static void testSymbolicExecution(int x, int y) {
-        double m = 1;
-        int d = 12;
-        int[][] arr = {{1, 2, 3, 5}, {1, 2, 3, 4}};
-        int[][][] a = new int[d]['a'][5];
-        arr[0][0] = 10;
-        arr[0] = new int[3];
-        double f = 6;
-        if(x < 10) {
-            System.out.println(d);
+        if (x > 5) {
+            return;
         }
-        for(int i = 1; i < x; i += 1) {
+        for (int i = 1; i < y; i = i + 1) {
             System.out.println(i);
         }
+        System.out.println("end");
     }
 
-    private static boolean tmpMark(String statement, boolean isTrueCondition, boolean isFalseCondition) {
+    private static boolean markV1(String statement, boolean isTrueCondition, boolean isFalseCondition) {
         MarkedPath.tmpAdd(statement, isTrueCondition, isFalseCondition);
-        if(!isTrueCondition && !isFalseCondition) return true;
+        if (!isTrueCondition && !isFalseCondition) return true;
         return !isFalseCondition;
+    }
+
+    private static boolean markV2(String statement) {
+        MarkedPathV2.add(statement);
+        return true;
     }
 
 //    public static void testSymbolicExecutionClone(int x, int y) {
@@ -321,86 +312,70 @@ public class CFG4J_Test
 //        }
 //    }
 
-        public static void testSymbolicExecutionClone(int x, int y) {
-        tmpMark("double m=1;\n", false, false);
-        double m = 1;
-        tmpMark("int d=12;\n", false, false);
-        int d = 12;
-        tmpMark("int[][] arr={{1,2,3,5},{1,2,3,4}};\n", false, false);
-        int[][] arr = {{1, 2, 3, 5}, {1, 2, 3, 4}};
-        tmpMark("int[][][] a=new int[d]['a'][5];\n", false, false);
-        int[][][] a = new int[d]['a'][5];
-        tmpMark("arr[0][0]=10;\n", false, false);
-        arr[0][0] = 10;
-        tmpMark("arr[0]=new int[3];\n", false, false);
-        arr[0] = new int[3];
-        tmpMark("double f=6;\n", false, false);
-        double f = 6;
-        if((x < 10 && tmpMark("x < 10", true, false)) || tmpMark("x < 10", false, true)) {
-            tmpMark("System.out.println(d);\n", false, false);
-            System.out.println(d);
+    public static void testSymbolicExecutionCloneV1(int x, int y) {
+        if ((x > 5 && markV1("x > 5", true, false)) || markV1("x > 5", false, true)) {
+            markV1("return;\n", false, false);
+            return;
         }
-        tmpMark("int i=1", false, false);
-        for(int i = 1; (i < x && tmpMark("i < x", true, false)) || tmpMark("i < x", false, true); tmpMark("i+=1", false, false), i += 1) {
-            tmpMark("System.out.println(i);\n", false, false);
+        markV1("int i=1", false, false);
+        for (int i = 1; (i < y && markV1("i < y", true, false)) || markV1("i < y", false, true); markV1("i=i + 1", false, false), i = i + 1) {
+            markV1("System.out.println(i);\n", false, false);
             System.out.println(i);
         }
+        markV1("System.out.println(\"end\");\n", false, false);
+        System.out.println("end");
     }
 
-    public void function(boolean A, boolean B, boolean C, int x) {
-//        if(A) {
-//            System.out.println(); // Statement A
-//        }
-//        if(B) {
-//            System.out.println(); // Statement B
-//        } else if(C) {
-//            System.out.println(); // Statement C
-//        }
-        for(int i = 0; i < x; i++) {
+    public static void testSymbolicExecutionCloneV2(int x, int y) {
+        if (markV2("x > 5") && x > 5) {
+            markV2("return;\n");
+            return;
+        }
+        markV2("int i=1");
+        for (int i = 1; markV2("i < y") && i < y; markV2("i=i + 1"), i = i + 1) {
+            markV2("System.out.println(i);\n");
             System.out.println(i);
         }
+        markV2("System.out.println(\"end\");\n");
+        System.out.println("end");
     }
-    public void testForEachLoop(ArrayList<String> s) {
-        for(String i : s) {
-            System.out.println("hi" + i);
-            System.out.println("bye" + i);
+
+    public static void function(boolean A, boolean B, boolean C) {
+        if (A) {
+            System.out.println(A);
+        }
+        if (B) {
+            System.out.println(B);
+        } else if (C) {
+            System.out.println(C);
         }
     }
 
-    public void testIf(int x) {
-        if(x == 10) {
-            System.out.println("hi");
+    public static void functionCloneV1(boolean A, boolean B, boolean C) {
+        if ((A && markV1("A", true, false)) || markV1("A", false, true)) {
+            markV1("System.out.println(A);\n", false, false);
+            System.out.println(A);
         }
-        if(x == 100){
-            System.out.println("100");
-        } else if (x == 1000) {
-            System.out.println(1000);
-        } else {
-            System.out.println("not a number");
-        }
-    }
-
-    public void testSwitchCase(int x) {
-        switch (x) {
-            case 1:
-                System.out.println("Hi everyone");
-                System.out.println("one");
-            case 2:
-                System.out.println("Me too");
-                System.out.println("two");
-                break;
-            case 3:
-                System.out.println("just three");
-            default:
-                System.out.println("not a number");
+        if ((B && markV1("B", true, false)) || markV1("B", false, true)) {
+            markV1("System.out.println(B);\n", false, false);
+            System.out.println(B);
+        } else if ((C && markV1("C", true, false)) || markV1("C", false, true)) {
+            markV1("System.out.println(C);\n", false, false);
+            System.out.println(C);
         }
     }
 
-    public void testDoWhile() {
-        int x = 10;
-        do {
-            x--;
-            System.out.println(x);
-        } while (x > 0);
+    public static void functionCloneV2(boolean A, boolean B, boolean C) {
+        if (markV2("A") && A) {
+            markV2("System.out.println(A);\n");
+            System.out.println(A);
+        }
+        if (markV2("B") && B) {
+            markV2("System.out.println(B);\n");
+            System.out.println(B);
+        } else if (markV2("C") && C) {
+            markV2("System.out.println(C);\n");
+            System.out.println(C);
+        }
     }
 }

@@ -68,19 +68,23 @@ public abstract class OperationExpressionNode extends ExpressionNode {
         Expr variable =  Variable.createZ3Variable(memoryModel.getVariable(stringName), ctx);
 
         //Check duplicate and add to vars
-        if(!OperationExpressionNode.haveDuplicateVariable(variable.toString(), vars)) {
+        int variableIndex = getDuplicateVariableIndex(variable.toString(), vars);
+        if(variableIndex != -1) {
+            vars.set(variableIndex, variable);
+        } else {
             vars.add(variable);
         }
+
         return variable;
     }
 
-    public static boolean haveDuplicateVariable(String var, List<Expr> vars) {
+    public static int getDuplicateVariableIndex(String var, List<Expr> vars) {
         for(int i = 0; i < vars.size(); i++) {
             if(var.equals(vars.get(i).toString())) {
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 
     public static AstNode executeOperationExpression(Expression expression, MemoryModel memoryModel) {

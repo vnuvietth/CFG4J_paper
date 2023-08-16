@@ -1,51 +1,57 @@
 import core.algorithms.FindAllPath;
+import core.algorithms.FindPath;
 import core.algorithms.SymbolicExecution;
 import core.cfg.CfgBlockNode;
 import core.cfg.CfgEndBlockNode;
 import core.cfg.CfgNode;
 import core.dataStructure.MarkedPath;
+import core.dataStructure.MarkedPathV2;
 import core.dataStructure.Path;
 import core.parser.ASTHelper;
 import core.parser.ProjectParser;
 import core.utils.Utils;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static core.testDriver.Utils.*;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
 public class AppStart {
-//    private static final Logger LOGGER = LoggerFactory.getLogger(CppApi.class);
+    //    private static final Logger LOGGER = LoggerFactory.getLogger(CppApi.class);
     private static long totalUsedMem = 0;
     private static long tickCount = 0;
 
     public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-        String path = "src\\main\\java\\data\\child\\CFG4J_Test.java";
+        String path = "src\\main\\java\\data\\CFG4J_Test.java";
         System.out.println("Start parsing...");
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
 
         System.out.println("count = " + funcAstNodeList.size());
 
-        String methodName = "testSymbolicExecution";
+        String methodName = "function";
+        String className = "data.CFG4J_Test";
 
         for (ASTNode func : funcAstNodeList) {
-            if (((MethodDeclaration)func).getName().getIdentifier().equals(methodName))
-            {
-                System.out.println("func = " + ((MethodDeclaration)func).getName());
+            if (((MethodDeclaration) func).getName().getIdentifier().equals(methodName)) {
+                System.out.println("func = " + ((MethodDeclaration) func).getName());
                 List<ASTNode> parameters = ((MethodDeclaration) func).parameters();
                 System.out.println("parameters.size() = " + ((MethodDeclaration) func).parameters().size());
-//                System.out.println(((SingleVariableDeclaration)((MethodDeclaration) func).parameters().get(0)).getName().getIdentifier());
 
                 Timer T = new Timer(true);
 
-                TimerTask memoryTask = new TimerTask(){
+                TimerTask memoryTask = new TimerTask() {
                     @Override
-                    public void run(){
-                        totalUsedMem += (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
+                    public void run() {
+                        totalUsedMem += (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
 //                        System.out.println("totalUsedMem = " + totalUsedMem);
                         tickCount += 1;
 //                        System.out.println("tickCount = " + tickCount);
@@ -54,8 +60,6 @@ public class AppStart {
                 };
 
                 T.scheduleAtFixedRate(memoryTask, 0, 1); //0 delay and 5 ms tick
-
-                LocalDateTime beforeTime = LocalDateTime.now();
 
                 // Generate CFG
                 Block functionBlock = Utils.getFunctionBlock(func);
@@ -72,49 +76,59 @@ public class AppStart {
                 block.setBeforeStatementNode(cfgBeginCfgNode);
                 block.setAfterStatementNode(cfgEndCfgNode);
 
-                CfgNode cfgNode = ASTHelper.generateCFGFromASTBlockNode(block);
+                ASTHelper.generateCFGFromASTBlockNode(block);
+                CfgNode cfgNode = cfgBeginCfgNode;
                 //===========================
 
-                // Find all paths
-                FindAllPath paths = new FindAllPath(cfgNode);
-                //============================
 
-                // Symbolic Execute
-                System.out.println("Number of paths: " + paths.getPaths().size());
-                Path testPath = paths.getPaths().get(0);
-                System.out.println(testPath);
-                SymbolicExecution solution = new SymbolicExecution(testPath, parameters);
-                //============================
 
-                // Dynamic Execute
-//                methodName = methodName + "Clone";
-                System.out.println("Dynamic Execute");
-                Method m = Class.forName("data.child.CFG4J_Test").getDeclaredMethod(methodName, int.class, int.class);
-                m.invoke(null, 2, 1);
-                if(MarkedPath.check(testPath)) {
-                    System.out.println("PATH IS COVERED");
-                } else {
-                    System.out.println("PATH IS NOT COVERED");
+                //============================
+                LocalDateTime beforeTime = LocalDateTime.now();
+//                methodName = methodName + "CloneV1";
+                methodName = "functionCloneV1";
+
+                Class<?>[] parameterClasses = getParameterClasses(parameters);
+                Method method = Class.forName(className).getDeclaredMethod(methodName, parameterClasses);
+
+                method.invoke(parameterClasses, createRandomTestData(parameterClasses));
+                MarkedPath.markPathToCFG(cfgNode);
+
+                List<Object[]> testData = new ArrayList<>();
+
+                for (CfgNode uncoveredNode = MarkedPath.findUncoveredNode(cfgNode, null); uncoveredNode != null; ) {
+
+                    Path newPath = (new FindPath(cfgNode, uncoveredNode, cfgEndCfgNode)).getPath();
+
+                    SymbolicExecution solution = new SymbolicExecution(newPath, parameters);
+
+                    testData.add(getParameterValue(parameterClasses));
+                    for(int i = 0; i < testData.size(); i++) {
+                        method.invoke(parameterClasses, testData.get(i));
+                        MarkedPath.markPathToCFG(cfgNode);
+                    }
+
+                    uncoveredNode = MarkedPath.findUncoveredNode(cfgNode, null);
                 }
-                //============================
+                System.out.println("Tested successfully with 100% coverage");
 
                 LocalDateTime afterTime = LocalDateTime.now();
 
                 Duration duration = Duration.between(beforeTime, afterTime);
 
                 float diff = Math.abs((float) duration.toMillis());
+                System.out.println("Total Concolic time: " + diff);
+                //========================================
 
                 T.cancel();
 
-                break;
+                System.out.println("func = " + ((MethodDeclaration) func).getName());
+//                System.out.println("tickCount = " + tickCount);
+                float usedMem = ((float) totalUsedMem) / tickCount / 1024 / 1024;
+                System.out.print("used mem = ");
+                System.out.printf("%.2f", usedMem);
+                System.out.println(" MB");
 
-//                System.out.println("func = " + ((MethodDeclaration)func).getName());
-//                System.out.println("used time = " + diff + " ms");
-////                System.out.println("tickCount = " + tickCount);
-//                float usedMem = ((float)totalUsedMem)/tickCount/1024/1024;
-//                System.out.print("used mem = ");
-//                System.out.printf("%.2f", usedMem);
-//                System.out.println(" MB");
+                break;
             }
         }
 
@@ -125,4 +139,5 @@ public class AppStart {
 //            e.printStackTrace();
 //        }
     }
+
 }

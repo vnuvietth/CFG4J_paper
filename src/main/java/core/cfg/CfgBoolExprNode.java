@@ -10,6 +10,11 @@ public class CfgBoolExprNode extends CfgNode implements IEvaluateCoverage
     private CfgNode falseNode = null;
     private CfgEndBlockNode endBlockNode = null;
 
+    private boolean isTrueMarked;
+    private boolean isFalseMarked;
+
+    private int depth = 0;
+
     @Override
     public String markContent(String testPath) {
         StringBuilder content = new StringBuilder("");
@@ -58,5 +63,29 @@ public class CfgBoolExprNode extends CfgNode implements IEvaluateCoverage
     public void setEndBlockNode(CfgEndBlockNode endBlockNode)
     {
         this.endBlockNode = endBlockNode;
+    }
+
+    public void setTrueMarked(boolean trueMarked) {
+        isTrueMarked = trueMarked;
+    }
+
+    public void setFalseMarked(boolean falseMarked) {
+        isFalseMarked = falseMarked;
+    }
+
+    public boolean isTrueMarked() {
+        return isTrueMarked;
+    }
+
+    public boolean isFalseMarked() {
+        return isFalseMarked;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 }
