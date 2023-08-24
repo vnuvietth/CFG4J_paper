@@ -246,35 +246,6 @@ public class CFG4J_Test {
         return false;
     }
 
-//    private static boolean mark(String line, String statement, boolean isAppend) {
-//        StringBuilder result = new StringBuilder();
-//        result.append();
-//        try {
-//            FileWriter writer = new FileWriter("src/main/java/data/child/markedInformation.txt", isAppend);
-//            writer.write(result.toString());
-//            if(isAppend) writer.write("\n");
-//            writer.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return true;
-//    }
-
-//    private static boolean Mark(String statement) {
-//        MarkedPath.add(statement);
-//        return true;
-//    }
-
-    public static void testSymbolicExecution(int x, int y) {
-        if (x > 5) {
-            return;
-        }
-        for (int i = 1; i < y; i = i + 1) {
-            System.out.println(i);
-        }
-        System.out.println("end");
-    }
-
     private static boolean markV1(String statement, boolean isTrueCondition, boolean isFalseCondition) {
         MarkedPath.tmpAdd(statement, isTrueCondition, isFalseCondition);
         if (!isTrueCondition && !isFalseCondition) return true;
@@ -286,31 +257,15 @@ public class CFG4J_Test {
         return true;
     }
 
-//    public static void testSymbolicExecutionClone(int x, int y) {
-//        mark("double m=1;\n");
-//        double m = 1;
-//        mark("int d=12;\n");
-//        int d = 12;
-//        mark("int[][] arr={{1,2,3,5},{1,2,3,4}};\n");
-//        int[][] arr = {{1, 2, 3, 5}, {1, 2, 3, 4}};
-//        mark("int[][][] a=new int[d]['a'][5];\n");
-//        int[][][] a = new int[d]['a'][5];
-//        mark("arr[0][0]=10;\n");
-//        arr[0][0] = 10;
-//        mark("arr[0]=new int[3];\n");
-//        arr[0] = new int[3];
-//        mark("double f=6;\n");
-//        double f = 6;
-//        if(x < 10 && mark("x < 10")) {
-//            mark("System.out.println(d);\n");
-//            System.out.println(d);
-//        }
-//        mark("int i=1");
-//        for(int i = 1; (i < x) && mark("i < x"); mark("i+=1"), i += 1) {
-//            mark("System.out.println(i);\n");
-//            System.out.println(i);
-//        }
-//    }
+    public static void testSymbolicExecution(int x, int y) {
+        if (x > 5) {
+            return;
+        }
+        for (int i = 1; i < y; i = i + 1) {
+            System.out.println(i);
+        }
+        System.out.println("end");
+    }
 
     public static void testSymbolicExecutionCloneV1(int x, int y) {
         if ((x > 5 && markV1("x > 5", true, false)) || markV1("x > 5", false, true)) {
@@ -340,8 +295,8 @@ public class CFG4J_Test {
         System.out.println("end");
     }
 
-    public static void function(boolean A, boolean B, boolean C) {
-        if (A) {
+    public static void function(boolean A, boolean B, boolean C, boolean X, boolean Y) {
+        if (A || X && Y) {
             System.out.println(A);
         }
         if (B) {
@@ -351,8 +306,10 @@ public class CFG4J_Test {
         }
     }
 
-    public static void functionCloneV1(boolean A, boolean B, boolean C) {
-        if ((A && markV1("A", true, false)) || markV1("A", false, true)) {
+    public static void functionCloneV1(boolean A, boolean B, boolean C, boolean X, boolean Y) {
+        if ((A && markV1("A", true, false)) || markV1("A", false, true)
+                || ((X && markV1("X", true, false)) || markV1("X", false, true))
+                && ((Y && markV1("Y", true, false)) || markV1("Y", false, true))) {
             markV1("System.out.println(A);\n", false, false);
             System.out.println(A);
         }
@@ -365,8 +322,8 @@ public class CFG4J_Test {
         }
     }
 
-    public static void functionCloneV2(boolean A, boolean B, boolean C) {
-        if (markV2("A") && A) {
+    public static void functionCloneV2(boolean A, boolean B, boolean C, boolean X, boolean Y) {
+        if ((markV2("A") && A) || (markV2("X") && X) && (markV2("Y") && Y)) {
             markV2("System.out.println(A);\n");
             System.out.println(A);
         }
@@ -378,4 +335,43 @@ public class CFG4J_Test {
             System.out.println(C);
         }
     }
+
+//    public static void function(boolean A, boolean B, boolean C) {
+//        if (A) {
+//            System.out.println(A);
+//        }
+//        if (B) {
+//            System.out.println(B);
+//        } else if (C) {
+//            System.out.println(C);
+//        }
+//    }
+//
+//    public static void functionCloneV1(boolean A, boolean B, boolean C) {
+//        if ((A && markV1("A", true, false)) || markV1("A", false, true)) {
+//            markV1("System.out.println(A);\n", false, false);
+//            System.out.println(A);
+//        }
+//        if ((B && markV1("B", true, false)) || markV1("B", false, true)) {
+//            markV1("System.out.println(B);\n", false, false);
+//            System.out.println(B);
+//        } else if ((C && markV1("C", true, false)) || markV1("C", false, true)) {
+//            markV1("System.out.println(C);\n", false, false);
+//            System.out.println(C);
+//        }
+//    }
+//
+//    public static void functionCloneV2(boolean A, boolean B, boolean C) {
+//        if (markV2("A") && A) {
+//            markV2("System.out.println(A);\n");
+//            System.out.println(A);
+//        }
+//        if (markV2("B") && B) {
+//            markV2("System.out.println(B);\n");
+//            System.out.println(B);
+//        } else if (markV2("C") && C) {
+//            markV2("System.out.println(C);\n");
+//            System.out.println(C);
+//        }
+//    }
 }

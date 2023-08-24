@@ -88,4 +88,10 @@ public class CfgBoolExprNode extends CfgNode implements IEvaluateCoverage
     public void setDepth(int depth) {
         this.depth = depth;
     }
+
+    public void setupCondition(CfgNode trueNode, CfgNode falseNode, CfgEndBlockNode endBoolNode) {
+        setTrueNode(trueNode);
+        setFalseNode(falseNode);
+        setEndBlockNode(endBoolNode);
+    }
 }

@@ -165,4 +165,8 @@ public final class SymbolicExecution {
             e.printStackTrace();
         }
     }
+
+    public Model getModel() {
+        return model;
+    }
 }

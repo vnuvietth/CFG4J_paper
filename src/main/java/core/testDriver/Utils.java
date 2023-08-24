@@ -163,23 +163,24 @@ public final class Utils {
 
     private static Object createRandomVariableData(Class<?> parameterClass) {
         String className = parameterClass.getName();
+        Random random = new Random();
 
         if ("int".equals(className)) {
-            return 1;
+            return random.nextInt();
         } else if ("boolean".equals(className)) {
-            return false;
+            return random.nextInt() % 2 == 0;
         } else if ("byte".equals(className)) {
-            return (byte) 1;
+            return (byte) ((Math.random() * (127 - (-128)) + (-128)));
         } else if ("short".equals(className)) {
-            return (short) 1;
+            return (short) ((Math.random() * ( 32767 - (-32768)) + (-32768)));
         } else if ("char".equals(className)) {
-            return 'a';
+            return (char) random.nextInt();
         } else if ("long".equals(className)) {
-            return (long) 1;
+            return random.nextLong();
         } else if ("float".equals(className)) {
-            return (float) 1.0;
+            return random.nextFloat();
         } else if ("double".equals(className)) {
-            return 1.0;
+            return random.nextDouble();
         } else if ("void".equals(className)) {
             return null;
         }

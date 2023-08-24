@@ -2,14 +2,11 @@ package core.parser;
 
 //import com.sun.istack.internal.NotNull;
 
-import core.ast.Expression.ExpressionNode;
 import core.ast.Expression.OperationExpression.InfixExpressionNode;
 import core.cfg.*;
 import core.utils.Utils;
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.internal.compiler.ast.ForeachStatement;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -135,10 +132,16 @@ public class ASTHelper {
                 generateCFGTreeFromASTNode(node, cfgChild);
             }
         }
-
     }
 
-    public static CfgNode generateCFGFromASTBlockNode(CfgNode block) {
+    public static CfgNode generateCFG(CfgNode block) {
+        endNodeStack = new Stack<>();
+        conditionNodeStack = new Stack<>();
+        endCfgNode = null;
+        return generateCFGFromASTBlockNode(block);
+    }
+
+    private static CfgNode generateCFGFromASTBlockNode(CfgNode block) {
         CfgNode beginStatementNode = block.getBeforeStatementNode();
         CfgEndBlockNode endStatementNode = (CfgEndBlockNode) block.getAfterStatementNode();
 
@@ -179,6 +182,8 @@ public class ASTHelper {
                     }
 
                 }
+            } else {
+                cfgRootNode = block.getAfterStatementNode();
             }
 
             //endregion Block processing
@@ -450,8 +455,7 @@ public class ASTHelper {
         return beginSwitchNode;
     }
 
-    public static CfgBoolExprNode generateCFGFromIfASTNode(CfgIfStatementBlockNode ifCfgNode)
-    {
+    public static CfgBoolExprNode generateCFGFromIfASTNode(CfgIfStatementBlockNode ifCfgNode) {
         CfgNode beforeNode = ifCfgNode.getBeforeStatementNode();
         CfgEndBlockNode cfgEndBoolNode = new CfgEndBlockNode();
 
@@ -460,329 +464,154 @@ public class ASTHelper {
         cfgEndBoolNode.setAfterStatementNode(afterNode);
         afterNode.setBeforeStatementNode(cfgEndBoolNode);
 
-        //CfgNode ifConditionNode =
-        Expression ifConditionAST = ((IfStatement) ifCfgNode.getAst()).getExpression();
+        // AST
+        IfStatement ifStatement = (IfStatement) ifCfgNode.getAst();
+        Expression ifConditionAST = ifStatement.getExpression();
+        Statement thenAST = ifStatement.getThenStatement();
+        Statement elseAST = ifStatement.getElseStatement();
 
-        CfgBoolExprNode ifCondition = new CfgBoolExprNode();
-        ifCondition.setAst(ifConditionAST);
-        ifCondition.setContent(ifConditionAST.toString());
+        // tmpEndNode xử lí vấn đề liên quan đến độ phủ điều kiện con của các câu lệnh "Và" ('&&', '&')
+        CfgEndBlockNode tmpEndNode = new CfgEndBlockNode();
 
-        ifCondition.setBeforeStatementNode(beforeNode);
-        beforeNode.setAfterStatementNode(ifCondition);
+        CfgBoolExprNode ifCondition = generateConditionCfg(ifConditionAST, cfgEndBoolNode, thenAST, beforeNode, tmpEndNode);
 
-        Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
-        CfgNode cfgThenNodeBlock = new CfgBlockNode();
+        CfgNode cfgElseNode = createElseBlock(elseAST, ifCondition, cfgEndBoolNode);
 
-        cfgThenNodeBlock.setAst(thenAST);
-        cfgThenNodeBlock.setContent(thenAST.toString());
+        tmpEndNode.setAfterStatementNode(cfgElseNode);
 
-        cfgThenNodeBlock.setBeforeStatementNode(ifCondition);
-
-        cfgThenNodeBlock.setAfterStatementNode(cfgEndBoolNode);
-
-        CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
-
-        // add to BeforeEndBoolNodeList
-        addToBeforeEndBoolNodeList(cfgEndBoolNode);
-
-        if(cfgThenNode == null) {
-            ifCondition.setTrueNode(cfgEndBoolNode);
-        } else {
-            ifCondition.setTrueNode(cfgThenNode);
-        }
-
-        Statement elseAST = ((IfStatement) ifCfgNode.getAst()).getElseStatement();
-
-        if (elseAST != null)
-        {
-            CfgNode cfgElseNodeBlock = new CfgBlockNode();
-            cfgElseNodeBlock.setAst(elseAST);
-            cfgElseNodeBlock.setContent(elseAST.toString());
-
-            cfgElseNodeBlock.setBeforeStatementNode(ifCondition);
-
-            cfgElseNodeBlock.setAfterStatementNode(cfgEndBoolNode);
-
-            CfgNode cfgElseNode = generateCFGFromASTBlockNode(cfgElseNodeBlock);
-
-            // add to BeforeEndBoolNodeList
-            addToBeforeEndBoolNodeList(cfgEndBoolNode);
-
-            ifCondition.setFalseNode(cfgElseNode);
-        }
-        else
-        {
-            ifCondition.setFalseNode(cfgEndBoolNode);
-        }
-
+        ifCondition.setFalseNode(cfgElseNode);
         ifCondition.setEndBlockNode(cfgEndBoolNode);
 
         return ifCondition;
     }
 
-//    public static CfgBoolExprNode generateCFGFromIfASTNode(CfgIfStatementBlockNode ifCfgNode) {
-//        CfgNode beforeNode = ifCfgNode.getBeforeStatementNode();
-//        CfgEndBlockNode cfgEndBoolNode = new CfgEndBlockNode();
-//
-//        CfgNode afterNode = ifCfgNode.getAfterStatementNode();
-//
-//        cfgEndBoolNode.setAfterStatementNode(afterNode);
-//        afterNode.setBeforeStatementNode(cfgEndBoolNode);
-//
-//        //CfgNode ifConditionNode =
-//        Expression ifConditionAST = ((IfStatement) ifCfgNode.getAst()).getExpression();
-//
-//        CfgBoolExprNode ifCondition = new CfgBoolExprNode();
-//        ifCondition.setAst(ifConditionAST);
-//        ifCondition.setContent(ifConditionAST.toString());
-//
-//        CfgBoolExprNode currentCondition = ifCondition;
-//
-//        if(isSeparableCondition(ifConditionAST)) {
-//            ifCondition = separateCondition((InfixExpression) ifConditionAST, ((IfStatement) ifCfgNode.getAst()).getThenStatement(), beforeNode, cfgEndBoolNode);
-//            currentCondition = ifCondition;
-//            do {
-//                currentCondition = (CfgBoolExprNode) currentCondition.getFalseNode();
-//            } while (currentCondition.getFalseNode() instanceof CfgBoolExprNode);
-//        } else {
-//            ifCondition.setBeforeStatementNode(beforeNode);
-//            beforeNode.setAfterStatementNode(ifCondition);
-//
-//            Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
-//            CfgNode cfgThenNodeBlock = new CfgBlockNode();
-//
-//            cfgThenNodeBlock.setAst(thenAST);
-//            cfgThenNodeBlock.setContent(thenAST.toString());
-//
-//            cfgThenNodeBlock.setBeforeStatementNode(ifCondition);
-//
-//            cfgThenNodeBlock.setAfterStatementNode(cfgEndBoolNode);
-//
-//            CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
-//
-//            // add to BeforeEndBoolNodeList
-//            addToBeforeEndBoolNodeList(cfgEndBoolNode);
-//
-//            if (cfgThenNode == null) {
-//                ifCondition.setTrueNode(cfgEndBoolNode);
-//            } else {
-//                ifCondition.setTrueNode(cfgThenNode);
-//            }
-//            ifCondition.setEndBlockNode(cfgEndBoolNode);
-//        }
-//
-////        if (ifConditionAST instanceof InfixExpression) {
-////            InfixExpression infixExpression = (InfixExpression) ifConditionAST;
-////            if (infixExpression.getOperator().equals(InfixExpression.Operator.CONDITIONAL_OR)) {
-////                Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
-////
-////                CfgBoolExprNode firstCondition = new CfgBoolExprNode();
-////                firstCondition.setAst(infixExpression.getLeftOperand());
-////                firstCondition.setContent(infixExpression.getLeftOperand().toString());
-////
-////                firstCondition.setBeforeStatementNode(beforeNode);
-////                beforeNode.setAfterStatementNode(firstCondition);
-////
-////                CfgNode fistThenBlock = new CfgBlockNode();
-////                fistThenBlock.setAst(thenAST);
-////                fistThenBlock.setContent(thenAST.toString());
-////                fistThenBlock.setBeforeStatementNode(firstCondition);
-////                fistThenBlock.setAfterStatementNode(cfgEndBoolNode);
-////
-////                CfgNode firstCfgThenNode = generateCFGFromASTBlockNode(fistThenBlock);
-////
-////                // add to BeforeEndBoolNodeList
-////                addToBeforeEndBoolNodeList(cfgEndBoolNode);
-////
-////                if (firstCfgThenNode == null) {
-////                    firstCondition.setTrueNode(cfgEndBoolNode);
-////                } else {
-////                    firstCondition.setTrueNode(firstCfgThenNode);
-////                }
-////                firstCondition.setEndBlockNode(cfgEndBoolNode);
-////
-////                CfgBoolExprNode secondCondition = new CfgBoolExprNode();
-////                secondCondition.setAst(infixExpression.getRightOperand());
-////                secondCondition.setContent(infixExpression.getRightOperand().toString());
-////
-////                secondCondition.setBeforeStatementNode(firstCfgThenNode);
-////                firstCondition.setFalseNode(secondCondition);
-////
-////
-////                CfgNode secondThenBlock = new CfgBlockNode();
-////                secondThenBlock.setAst(thenAST);
-////                secondThenBlock.setContent(thenAST.toString());
-////                secondThenBlock.setBeforeStatementNode(secondCondition);
-////                secondThenBlock.setAfterStatementNode(cfgEndBoolNode);
-////
-////                CfgNode secondCfgThenNode = generateCFGFromASTBlockNode(secondThenBlock);
-////
-////                // add to BeforeEndBoolNodeList
-////                addToBeforeEndBoolNodeList(cfgEndBoolNode);
-////
-////                if (firstCfgThenNode == null) {
-////                    secondCondition.setTrueNode(cfgEndBoolNode);
-////                } else {
-////                    secondCondition.setTrueNode(secondCfgThenNode);
-////                }
-////                secondCondition.setEndBlockNode(cfgEndBoolNode);
-////
-////                ifCondition = firstCondition;
-////                currentCondition = secondCondition;
-////            } else {
-////                ifCondition.setBeforeStatementNode(beforeNode);
-////                beforeNode.setAfterStatementNode(ifCondition);
-////
-////                Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
-////                CfgNode cfgThenNodeBlock = new CfgBlockNode();
-////
-////                cfgThenNodeBlock.setAst(thenAST);
-////                cfgThenNodeBlock.setContent(thenAST.toString());
-////
-////                cfgThenNodeBlock.setBeforeStatementNode(ifCondition);
-////
-////                cfgThenNodeBlock.setAfterStatementNode(cfgEndBoolNode);
-////
-////                CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
-////
-////                // add to BeforeEndBoolNodeList
-////                addToBeforeEndBoolNodeList(cfgEndBoolNode);
-////
-////                if (cfgThenNode == null) {
-////                    ifCondition.setTrueNode(cfgEndBoolNode);
-////                } else {
-////                    ifCondition.setTrueNode(cfgThenNode);
-////                }
-////                ifCondition.setEndBlockNode(cfgEndBoolNode);
-////            }
-////        }
-//
-//
-//
-////        ifCondition.setBeforeStatementNode(beforeNode);
-////        beforeNode.setAfterStatementNode(ifCondition);
-////
-////        Statement thenAST = ((IfStatement) ifCfgNode.getAst()).getThenStatement();
-////        CfgNode cfgThenNodeBlock = new CfgBlockNode();
-////
-////        cfgThenNodeBlock.setAst(thenAST);
-////        cfgThenNodeBlock.setContent(thenAST.toString());
-////
-////        cfgThenNodeBlock.setBeforeStatementNode(ifCondition);
-////
-////        cfgThenNodeBlock.setAfterStatementNode(cfgEndBoolNode);
-////
-////        CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
-////
-////        // add to BeforeEndBoolNodeList
-////        addToBeforeEndBoolNodeList(cfgEndBoolNode);
-////
-////        if(cfgThenNode == null) {
-////            ifCondition.setTrueNode(cfgEndBoolNode);
-////        } else {
-////            ifCondition.setTrueNode(cfgThenNode);
-////        }
-////        ifCondition.setEndBlockNode(cfgEndBoolNode);
-//
-//        Statement elseAST = ((IfStatement) ifCfgNode.getAst()).getElseStatement();
-//
-//        if (elseAST != null) {
-//            CfgNode cfgElseNodeBlock = new CfgBlockNode();
-//            cfgElseNodeBlock.setAst(elseAST);
-//            cfgElseNodeBlock.setContent(elseAST.toString());
-//
-//            cfgElseNodeBlock.setBeforeStatementNode(currentCondition); // latest
-//
-//            cfgElseNodeBlock.setAfterStatementNode(cfgEndBoolNode);
-//
-//            CfgNode cfgElseNode = generateCFGFromASTBlockNode(cfgElseNodeBlock);
-//
-//            // add to BeforeEndBoolNodeList
-//            addToBeforeEndBoolNodeList(cfgEndBoolNode);
-//
-//            currentCondition.setFalseNode(cfgElseNode); // latest
-//        } else {
-//            currentCondition.setFalseNode(cfgEndBoolNode);// latest
-//        }
-//
-//        return ifCondition; // first
-//    }
+    // tmpEndNode xử lí vấn đề liên quan đến độ phủ điều kiện con của các câu lệnh "Và" ('&&', '&')
+    public static CfgBoolExprNode generateConditionCfg(Expression condition, CfgEndBlockNode endBoolNode, Statement thenStatement, CfgNode beforeNode, CfgEndBlockNode tmpEndNode) {
 
-    private static CfgBoolExprNode separateCondition(InfixExpression infixExpression, Statement thenAST, CfgNode beforeNode, CfgEndBlockNode cfgEndBoolNode) {
-        if (infixExpression.getOperator().equals(InfixExpression.Operator.CONDITIONAL_OR)) {
-            CfgBoolExprNode firstCondition = new CfgBoolExprNode();
-            firstCondition.setAst(infixExpression.getLeftOperand());
-            firstCondition.setContent(infixExpression.getLeftOperand().toString());
+        if (condition instanceof InfixExpression && isOrOperator(((InfixExpression) condition).getOperator())) { // điều kiện có chứa dấu "Hoặc"
+            InfixExpression infixExpression = (InfixExpression) condition;
+            Expression leftOperand = infixExpression.getLeftOperand();
+            Expression rightOperand = infixExpression.getRightOperand();
+            List extendedOperands = infixExpression.extendedOperands();
 
-            firstCondition.setBeforeStatementNode(beforeNode);
-            beforeNode.setAfterStatementNode(firstCondition);
+            CfgEndBlockNode firstTmpEndNode = new CfgEndBlockNode();
+            CfgEndBlockNode currentTmpEndNode = new CfgEndBlockNode();
 
-            CfgNode fistThenBlock = new CfgBlockNode();
-            fistThenBlock.setAst(thenAST);
-            fistThenBlock.setContent(thenAST.toString());
-            fistThenBlock.setBeforeStatementNode(firstCondition);
-            fistThenBlock.setAfterStatementNode(cfgEndBoolNode);
+            CfgBoolExprNode firstCondition = generateConditionCfg(leftOperand, endBoolNode, thenStatement, beforeNode, firstTmpEndNode);
+            CfgBoolExprNode currentCondition = generateConditionCfg(rightOperand, endBoolNode, thenStatement, firstCondition, currentTmpEndNode);
 
-            CfgNode firstCfgThenNode = generateCFGFromASTBlockNode(fistThenBlock);
+            firstTmpEndNode.setAfterStatementNode(currentCondition);
 
-            // add to BeforeEndBoolNodeList
-            addToBeforeEndBoolNodeList(cfgEndBoolNode);
+            firstCondition.setFalseNode(currentCondition);
 
-            if (firstCfgThenNode == null) {
-                firstCondition.setTrueNode(cfgEndBoolNode);
-            } else {
-                firstCondition.setTrueNode(firstCfgThenNode);
+            for (int i = 0; i < extendedOperands.size(); i++) {
+                CfgEndBlockNode newTmpEndNode = new CfgEndBlockNode();
+                CfgBoolExprNode newCondition = generateConditionCfg((Expression) extendedOperands.get(i), endBoolNode, thenStatement, currentCondition, newTmpEndNode);
+
+                currentTmpEndNode.setAfterStatementNode(newCondition);
+                currentTmpEndNode = newTmpEndNode;
+
+                currentCondition.setFalseNode(newCondition);
+                currentCondition = newCondition;
             }
-            firstCondition.setEndBlockNode(cfgEndBoolNode);
 
-            CfgBoolExprNode secondCondition = new CfgBoolExprNode();
-            secondCondition.setAst(infixExpression.getRightOperand());
-            secondCondition.setContent(infixExpression.getRightOperand().toString());
+            return currentCondition;
 
-            secondCondition.setBeforeStatementNode(firstCfgThenNode);
-            firstCondition.setFalseNode(secondCondition);
+        } else if (condition instanceof InfixExpression && isAndOperator(((InfixExpression) condition).getOperator())) { // điều kiện có chứa dấu "Và"
+            InfixExpression infixExpression = (InfixExpression) condition;
+            Expression leftOperand = infixExpression.getLeftOperand();
+            Expression rightOperand = infixExpression.getRightOperand();
+            List extendedOperands = infixExpression.extendedOperands();
 
+            CfgBoolExprNode firstCondition = createCondition(leftOperand, beforeNode);
 
-            CfgNode secondThenBlock = new CfgBlockNode();
-            secondThenBlock.setAst(thenAST);
-            secondThenBlock.setContent(thenAST.toString());
-            secondThenBlock.setBeforeStatementNode(secondCondition);
-            secondThenBlock.setAfterStatementNode(cfgEndBoolNode);
+            CfgBoolExprNode currentCondition = createCondition(rightOperand, firstCondition);
+            firstCondition.setupCondition(currentCondition, tmpEndNode, endBoolNode);
 
-            CfgNode secondCfgThenNode = generateCFGFromASTBlockNode(secondThenBlock);
-
-            // add to BeforeEndBoolNodeList
-            addToBeforeEndBoolNodeList(cfgEndBoolNode);
-
-            if (firstCfgThenNode == null) {
-                secondCondition.setTrueNode(cfgEndBoolNode);
-            } else {
-                secondCondition.setTrueNode(secondCfgThenNode);
+            for (int i = 0; i < extendedOperands.size(); i++) {
+                CfgBoolExprNode newCondition = createCondition((Expression) extendedOperands.get(i), currentCondition);
+                currentCondition.setupCondition(newCondition, tmpEndNode, endBoolNode);
+                currentCondition = newCondition;
             }
-            secondCondition.setEndBlockNode(cfgEndBoolNode);
 
-//            Expression leftOperand = infixExpression.getLeftOperand();
-//            Expression rightOperand = infixExpression.getRightOperand();
-//            if(isSeparableCondition(leftOperand)) {
-//                separateCondition((InfixExpression) leftOperand, thenAST, secondCondition, cfgEndBoolNode);
-//            }
-//            if(isSeparableCondition(rightOperand)) {
-//                separateCondition((InfixExpression) rightOperand, thenAST, secondCondition, cfgEndBoolNode);
-//            }
+            currentCondition.setupCondition(createThenBlock(thenStatement, currentCondition, endBoolNode), tmpEndNode, endBoolNode);
 
             return firstCondition;
+
         } else {
-            return null;
+
+            CfgBoolExprNode ifCondition = createCondition(condition, beforeNode);
+
+            ifCondition.setTrueNode(createThenBlock(thenStatement, ifCondition, endBoolNode));
+
+            ifCondition.setEndBlockNode(endBoolNode);
+
+            return ifCondition;
         }
     }
 
-    private static boolean isSeparableCondition(Expression condition) {
-        if(condition instanceof InfixExpression) {
-            InfixExpression infixExpression = (InfixExpression) condition;
-            InfixExpression.Operator operator = infixExpression.getOperator();
-            return InfixExpressionNode.isConditionalOperator(operator) || InfixExpressionNode.isBooleanBitwiseOperator(operator);
+    private static CfgBoolExprNode createCondition(Expression condition, CfgNode beforeNode) {
+        CfgBoolExprNode ifCondition = new CfgBoolExprNode();
+        ifCondition.setAst(condition);
+        ifCondition.setContent(condition.toString());
+
+        ifCondition.setBeforeStatementNode(beforeNode);
+        beforeNode.setAfterStatementNode(ifCondition);
+
+        return ifCondition;
+    }
+
+    private static CfgNode createThenBlock(Statement thenStatement, CfgBoolExprNode condition, CfgEndBlockNode endBoolNode) {
+        CfgNode cfgThenNodeBlock = new CfgBlockNode();
+
+        cfgThenNodeBlock.setAst(thenStatement);
+        cfgThenNodeBlock.setContent(thenStatement.toString());
+
+        cfgThenNodeBlock.setBeforeStatementNode(condition);
+
+        cfgThenNodeBlock.setAfterStatementNode(endBoolNode);
+
+        CfgNode cfgThenNode = generateCFGFromASTBlockNode(cfgThenNodeBlock);
+
+        // add to BeforeEndBoolNodeList
+        addToBeforeEndBoolNodeList(endBoolNode);
+
+        if (cfgThenNode == null) {
+            return endBoolNode;
+        } else {
+            return cfgThenNode;
         }
-        return false;
+    }
+
+    private static CfgNode createElseBlock(Statement elseStatement, CfgBoolExprNode condition, CfgEndBlockNode endBoolNode) {
+        if (elseStatement != null) {
+            CfgNode cfgElseNodeBlock = new CfgBlockNode();
+            cfgElseNodeBlock.setAst(elseStatement);
+            cfgElseNodeBlock.setContent(elseStatement.toString());
+
+            cfgElseNodeBlock.setBeforeStatementNode(condition);
+
+            cfgElseNodeBlock.setAfterStatementNode(endBoolNode);
+
+            CfgNode cfgElseNode = generateCFGFromASTBlockNode(cfgElseNodeBlock);
+
+            // add to BeforeEndBoolNodeList
+            addToBeforeEndBoolNodeList(endBoolNode);
+
+            return cfgElseNode;
+        } else {
+            return endBoolNode;
+        }
+    }
+
+    private static boolean isOrOperator(InfixExpression.Operator operator) {
+        return operator.equals(InfixExpression.Operator.CONDITIONAL_OR) ||
+                operator.equals(InfixExpression.Operator.OR);
+    }
+
+    private static boolean isAndOperator(InfixExpression.Operator operator) {
+        return operator.equals(InfixExpression.Operator.CONDITIONAL_AND) ||
+                operator.equals(InfixExpression.Operator.AND);
     }
 
     private static CfgBeginBlockNode generateCFGFromBlockASTNode(CfgBlockNode cfgBlockNode) {

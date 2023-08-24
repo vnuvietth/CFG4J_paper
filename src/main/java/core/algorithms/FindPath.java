@@ -23,7 +23,9 @@ public class FindPath {
         path = null;
         findPath(middleNode.getAfterStatementNode(), endNode);
         Path lastHaft = path;
-        firstHaft.getCurrentLast().setNext(lastHaft.getCurrentFirst());
+        if(lastHaft != null) {
+            firstHaft.getCurrentLast().setNext(lastHaft.getCurrentFirst());
+        }
         path = firstHaft;
     }
 
@@ -45,14 +47,14 @@ public class FindPath {
             if(beginNode instanceof CfgBoolExprNode) {
                 CfgBoolExprNode boolExprNode = (CfgBoolExprNode) beginNode;
 
+                CfgNode falseNode = boolExprNode.getFalseNode();
+                falseNode.setIsFalseNode(true);
+                findPath(falseNode, endNode);
                 // CfgBoolExprNode has 2 child node is trueNode and falseNode
                 if(beginNode != currentDuplicateNode) {
                     currentDuplicateNode = beginNode;
                     findPath(boolExprNode.getTrueNode(), endNode);
                 }
-                CfgNode falseNode = boolExprNode.getFalseNode();
-                falseNode.setIsFalseNode(true);
-                findPath(falseNode, endNode);
 
             } else if(beginNode instanceof CfgForEachExpressionNode) {
 

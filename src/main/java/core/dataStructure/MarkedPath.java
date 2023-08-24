@@ -28,6 +28,7 @@ public final class MarkedPath {
             if (rootNode.getContent().equals(markedStatement.getStatement())) {
                 rootNode.setMarked(true);
             } else {
+                reset();
                 return;
             }
 

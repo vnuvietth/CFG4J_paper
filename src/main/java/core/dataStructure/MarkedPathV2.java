@@ -26,6 +26,7 @@ public final class MarkedPathV2 {
             }
 
             if(!cfgNode.getContent().equals(markedStatements.get(i))) {
+                reset();
                 return false;
             }
 

@@ -76,48 +76,113 @@ public class AppStart {
                 block.setBeforeStatementNode(cfgBeginCfgNode);
                 block.setAfterStatementNode(cfgEndCfgNode);
 
-                ASTHelper.generateCFGFromASTBlockNode(block);
+                ASTHelper.generateCFG(block);
                 CfgNode cfgNode = cfgBeginCfgNode;
                 //===========================
 
+                LocalDateTime beforeTime;
+                LocalDateTime afterTime;
+                double usedTime = 0;
 
-
-                //============================
-                LocalDateTime beforeTime = LocalDateTime.now();
-//                methodName = methodName + "CloneV1";
-                methodName = "functionCloneV1";
+                //=======================FULL CONCOLIC VERSION 1===========================
+                methodName = methodName + "CloneV1";
 
                 Class<?>[] parameterClasses = getParameterClasses(parameters);
                 Method method = Class.forName(className).getDeclaredMethod(methodName, parameterClasses);
 
+                beforeTime = LocalDateTime.now();
+
                 method.invoke(parameterClasses, createRandomTestData(parameterClasses));
                 MarkedPath.markPathToCFG(cfgNode);
 
-                List<Object[]> testData = new ArrayList<>();
+                afterTime = LocalDateTime.now();
+                usedTime += Math.abs((float) Duration.between(beforeTime, afterTime).toMillis());
+
+                boolean isTestedSuccessfully = true;
+
+                beforeTime = LocalDateTime.now();
 
                 for (CfgNode uncoveredNode = MarkedPath.findUncoveredNode(cfgNode, null); uncoveredNode != null; ) {
 
+                    afterTime = LocalDateTime.now();
+                    usedTime += Math.abs((float) Duration.between(beforeTime, afterTime).toMillis());
+
+                    beforeTime = LocalDateTime.now();
+
                     Path newPath = (new FindPath(cfgNode, uncoveredNode, cfgEndCfgNode)).getPath();
+
+                    afterTime = LocalDateTime.now();
+                    usedTime += Math.abs((float) Duration.between(beforeTime, afterTime).toMillis());
+
+                    beforeTime = LocalDateTime.now();
 
                     SymbolicExecution solution = new SymbolicExecution(newPath, parameters);
 
-                    testData.add(getParameterValue(parameterClasses));
-                    for(int i = 0; i < testData.size(); i++) {
-                        method.invoke(parameterClasses, testData.get(i));
-                        MarkedPath.markPathToCFG(cfgNode);
+                    if(solution.getModel() == null) {
+                        isTestedSuccessfully = false;
+                        break;
                     }
 
+                    afterTime = LocalDateTime.now();
+                    usedTime += Math.abs((float) Duration.between(beforeTime, afterTime).toMillis());
+
+                    beforeTime = LocalDateTime.now();
+
+                    method.invoke(parameterClasses, getParameterValue(parameterClasses));
+                    MarkedPath.markPathToCFG(cfgNode);
+
+                    afterTime = LocalDateTime.now();
+                    usedTime += Math.abs((float) Duration.between(beforeTime, afterTime).toMillis());
+
+                    beforeTime = LocalDateTime.now();
+
                     uncoveredNode = MarkedPath.findUncoveredNode(cfgNode, null);
+                    System.out.println("Uncovered Node: " + uncoveredNode);
                 }
-                System.out.println("Tested successfully with 100% coverage");
 
-                LocalDateTime afterTime = LocalDateTime.now();
+                if(isTestedSuccessfully) System.out.println("Tested successfully with 100% coverage");
+                else System.out.println("Test fail due to UNSATISFIABLE constraint");
 
-                Duration duration = Duration.between(beforeTime, afterTime);
-
-                float diff = Math.abs((float) duration.toMillis());
-                System.out.println("Total Concolic time: " + diff);
+                System.out.println("Total Concolic time: " + usedTime);
                 //========================================
+
+
+                //=======================FULL CONCOLIC VERSION 2===========================
+//                methodName = methodName + "CloneV2";
+//
+//                Class<?>[] parameterClassesV2 = getParameterClasses(parameters);
+//                Method methodV2 = Class.forName(className).getDeclaredMethod(methodName, parameterClassesV2);
+//
+//                beforeTime = LocalDateTime.now();
+//
+//                List<Path> paths = (new FindAllPath(cfgNode)).getPaths();
+//                System.out.println(paths.size());
+//
+//                afterTime = LocalDateTime.now();
+//                usedTime += Math.abs((float) Duration.between(beforeTime, afterTime).toMillis());
+//
+//
+//                for (int i = 0; i < paths.size(); i += 1) {
+//                    beforeTime = LocalDateTime.now();
+//
+//                    SymbolicExecution execution = new SymbolicExecution(paths.get(i), parameters);
+//
+//                    afterTime = LocalDateTime.now();
+//                    usedTime += Math.abs((float) Duration.between(beforeTime, afterTime).toMillis());
+//
+//                    beforeTime = LocalDateTime.now();
+//
+//                    methodV2.invoke(parameterClassesV2, getParameterValue(parameterClassesV2));
+//                    if (!MarkedPathV2.check(paths.get(i))) {
+//                        System.out.println("Path is not covered");
+//                    }
+//
+//                    afterTime = LocalDateTime.now();
+//                    usedTime += Math.abs((float) Duration.between(beforeTime, afterTime).toMillis());
+//                }
+//
+//                System.out.println("Total Concolic time: " + usedTime);
+                //===================================
 
                 T.cancel();
 
