@@ -2,8 +2,7 @@ package core.testDriver;
 
 import org.eclipse.jdt.core.dom.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -118,7 +117,7 @@ public final class Utils {
         }
 
         for (int i = 0; i < parameterClasses.length; i++) {
-            if(!scanner.hasNext()) {
+            if (!scanner.hasNext()) {
                 result[i] = createRandomVariableData(parameterClasses[i]);
                 continue;
             }
@@ -154,7 +153,7 @@ public final class Utils {
     public static Object[] createRandomTestData(Class<?>[] parameterClasses) {
         Object[] result = new Object[parameterClasses.length];
 
-        for(int i = 0; i < result.length; i++) {
+        for (int i = 0; i < result.length; i++) {
             result[i] = createRandomVariableData(parameterClasses[i]);
         }
 
@@ -172,7 +171,7 @@ public final class Utils {
         } else if ("byte".equals(className)) {
             return (byte) ((Math.random() * (127 - (-128)) + (-128)));
         } else if ("short".equals(className)) {
-            return (short) ((Math.random() * ( 32767 - (-32768)) + (-32768)));
+            return (short) ((Math.random() * (32767 - (-32768)) + (-32768)));
         } else if ("char".equals(className)) {
             return (char) random.nextInt();
         } else if ("long".equals(className)) {
@@ -185,5 +184,121 @@ public final class Utils {
             return null;
         }
         throw new RuntimeException("Unsupported type: " + className);
+    }
+
+    public static void createCloneMethod(MethodDeclaration method) {
+        StringBuilder cloneMethod = new StringBuilder();
+        cloneMethod.append("package data;\n");
+        cloneMethod.append("import static core.dataStructure.MarkedPath.markOneStatement;\n");
+        cloneMethod.append("public class CloneFile {\n");
+        cloneMethod.append("public static ").append(method.getReturnType2()).append(" ").append(method.getName()).append("(");
+        List<ASTNode> parameters = method.parameters();
+        for (int i = 0; i < parameters.size(); i++) {
+            cloneMethod.append(parameters.get(i));
+            if(i != parameters.size() - 1) cloneMethod.append(", ");
+        }
+        cloneMethod.append(")\n");
+//        cloneMethod.append(") {\n");
+//
+//
+//        cloneMethod.append("}\n");
+
+        cloneMethod.append(generateCodeForBlock(method.getBody()));
+
+        cloneMethod.append("}");
+
+        writeDataToFile(cloneMethod.toString());
+    }
+
+    private static String generateCodeForOneStatement(ASTNode statement) {
+        if(statement == null) {
+            return "";
+        }
+
+        if (statement instanceof Block) {
+            return generateCodeForBlock((Block) statement);
+        } else if(statement instanceof IfStatement) {
+            return generateCodeForIfStatement((IfStatement) statement);
+        } else {
+            StringBuilder result = new StringBuilder();
+
+            String stringStatement = statement.toString();
+            StringBuilder newStatement = new StringBuilder();
+            for(int i = 0; i < stringStatement.length(); i++) {
+//                if (stringStatement.charAt(i) == '\n') {
+//                    stringStatement = stringStatement.substring(0, i -1) + "\\n";
+//                    if (i != stringStatement.length() - 1) {
+//                        stringStatement += stringStatement.substring(i + 1, stringStatement.length() - 1);
+//                    }
+//                }
+                char charAt = stringStatement.charAt(i);
+
+                if (charAt == '\n') {
+                    newStatement.append("\\n");
+                    continue;
+                } else if (charAt == '"') {
+                    newStatement.append("\\").append('"');
+                    continue;
+                } else if (i != stringStatement.length() - 1 && charAt == '\\' && stringStatement.charAt(i + 1) == 'n') {
+                    newStatement.append("\" + \"").append("\\n").append("\" + \"");
+                    i++;
+                    continue;
+                }
+
+                newStatement.append(charAt);
+            }
+
+            result.append("markOneStatement(\"").append(newStatement).append("\", false, false);\n");
+            result.append(statement);
+
+            return result.toString();
+        }
+
+    }
+
+    private static String generateCodeForBlock(Block block) {
+        StringBuilder result = new StringBuilder();
+        List<ASTNode> statements = block.statements();
+
+        result.append("{\n");
+        for(int i = 0; i < statements.size(); i++) {
+            result.append(generateCodeForOneStatement(statements.get(i)));
+        }
+        result.append("}\n");
+
+        return result.toString();
+    }
+
+    private static String generateCodeForIfStatement(IfStatement ifStatement) {
+        StringBuilder result = new StringBuilder();
+
+        result.append("if (").append(generateCondition(ifStatement.getExpression())).append(")\n");
+        result.append(generateCodeForOneStatement(ifStatement.getThenStatement()));
+
+        String elseCode = generateCodeForOneStatement(ifStatement.getElseStatement());
+        if(!elseCode.equals("")) {
+            result.append("else ").append(elseCode);
+        }
+
+        return result.toString();
+    }
+
+    private static String generateCondition(Expression condition) {
+        StringBuilder result = new StringBuilder();
+
+        result.append("((").append(condition).append(") && markOneStatement(\"").append(condition).append("\", true, false))");
+        result.append(" || markOneStatement(\"").append(condition).append("\", false, true)");
+
+        return result.toString();
+    }
+
+    private static void writeDataToFile(String data) {
+        try {
+            FileWriter writer = new FileWriter("src/main/java/data/CloneFile.java");
+            writer.write(data + "\n");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

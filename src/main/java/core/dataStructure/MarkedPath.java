@@ -1,6 +1,5 @@
 package core.dataStructure;
 
-import core.ast.additionalNodes.Node;
 import core.cfg.CfgBoolExprNode;
 import core.cfg.CfgNode;
 
@@ -12,6 +11,12 @@ public final class MarkedPath {
     private static List<MarkedStatement> markedStatements = new ArrayList<>();
 
     private MarkedPath() {
+    }
+
+    public static boolean markOneStatement(String statement, boolean isTrueCondition, boolean isFalseCondition) {
+        tmpAdd(statement, isTrueCondition, isFalseCondition);
+        if (!isTrueCondition && !isFalseCondition) return true;
+        return !isFalseCondition;
     }
 
     public static void markPathToCFG(CfgNode rootNode) {

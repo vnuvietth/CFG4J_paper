@@ -642,6 +642,125 @@ public class ASTHelper {
         return beginBlockNode;
     }
 
+//    public static CfgBeginForNode generateCFGFromForASTNode(CfgForStatementBlockNode forCfgNode) {
+////        System.out.println("generateCFGFromForASTNode starts...");
+//        CfgNode beforeNode = forCfgNode.getBeforeStatementNode();
+//        CfgBeginForNode beginForNode = new CfgBeginForNode();
+//
+//        beforeNode.setAfterStatementNode(beginForNode);
+//        beginForNode.setBeforeStatementNode(beforeNode);
+//
+//        CfgEndBlockNode cfgEndBlockNode = new CfgEndBlockNode();
+//
+//        CfgNode afterNode = forCfgNode.getAfterStatementNode();
+//
+//        cfgEndBlockNode.setAfterStatementNode(afterNode);
+//        afterNode.setBeforeStatementNode(cfgEndBlockNode);
+//
+//        beginForNode.setEndBlockNode(cfgEndBlockNode);
+//
+//        List initializers = ((ForStatement) forCfgNode.getAst()).initializers();
+//
+//        CfgNode tempBeforeNode = beginForNode;
+//
+//        for (int i = 0; i < initializers.size(); i++) {
+//            CfgNormalNode normalNode = new CfgNormalNode();
+//
+//            if (initializers.get(i) instanceof VariableDeclarationExpression) {
+//                normalNode.setAst((VariableDeclarationExpression) initializers.get(i));
+//            } else if (initializers.get(i) instanceof Assignment) {
+//                normalNode.setAst((Assignment) initializers.get(i));
+//            }
+//
+//            LinkCurrentNode(tempBeforeNode, normalNode, afterNode);
+//
+//            tempBeforeNode = normalNode;
+//        }
+//
+//        //Dieu kien
+//        Expression forConditionAST = ((ForStatement) forCfgNode.getAst()).getExpression();
+//
+////        CfgBoolExprNode forConditionNode = new CfgBoolExprNode();
+////        forConditionNode.setAst(forConditionAST);
+////        forConditionNode.setContent(forConditionAST.toString());
+////
+////        LinkCurrentNode(tempBeforeNode, forConditionNode, afterNode);
+//
+//        //Khoi body
+//        Statement bodyStatementBlock = ((ForStatement) forCfgNode.getAst()).getBody();
+////        CfgNode bodyStatementNode = new CfgBlockNode();
+////        bodyStatementNode.setAst(bodyStatementBlock);
+////        bodyStatementNode.setContent(bodyStatementBlock.toString());
+//
+//        CfgEndBlockNode endBodyBlockNode = new CfgEndBlockNode();
+//
+//        //Updater
+//        List updaters = ((ForStatement) forCfgNode.getAst()).updaters();
+//
+//        CfgNode tempBeforeUpdaterNode = endBodyBlockNode;
+//
+//        CfgNode firstUpdaterNode = null;
+//
+//        for (int i = 0; i < updaters.size(); i++) {
+//            CfgNormalNode normalNode = new CfgNormalNode();
+//
+//            if (updaters.get(i) instanceof PostfixExpression) {
+//                normalNode.setAst((PostfixExpression) updaters.get(i));
+//            } else if (updaters.get(i) instanceof Assignment) {
+//                normalNode.setAst((Assignment) updaters.get(i));
+//            }
+//
+//            LinkCurrentNode(tempBeforeUpdaterNode, normalNode, afterNode);
+//
+//            tempBeforeUpdaterNode = normalNode;
+//
+//            if (i == 0) {
+//                firstUpdaterNode = normalNode;
+//            }
+//        }
+//
+//        endBodyBlockNode.setAfterStatementNode(firstUpdaterNode);
+//        firstUpdaterNode.setBeforeStatementNode(endBodyBlockNode);
+//
+//        // add end node to keep track of latest endBlockNode
+//        endNodeStack.push(cfgEndBlockNode);
+//
+//        // add condition node to keep track of the latest condition node
+//        conditionNodeStack.push(endBodyBlockNode);
+//
+////        bodyStatementNode.setBeforeStatementNode(forConditionNode);
+////        bodyStatementNode.setAfterStatementNode(endBodyBlockNode);
+//
+//        // here
+//        CfgEndBlockNode tmpEndNode = new CfgEndBlockNode();
+//
+//        CfgBoolExprNode forConditionNode = generateConditionCfg(forConditionAST, endBodyBlockNode, bodyStatementBlock, tempBeforeUpdaterNode, tmpEndNode);
+//        tmpEndNode.setAfterStatementNode(cfgEndBlockNode);
+//
+//        tempBeforeNode.setAfterStatementNode(forConditionNode);
+//        tempBeforeUpdaterNode.setAfterStatementNode(forConditionNode);
+//
+////        CfgNode cfgBodyNode = generateCFGFromASTBlockNode(bodyStatementNode);
+//
+//
+//
+////        if (cfgBodyNode == null) {
+////            forConditionNode.setTrueNode(endBodyBlockNode);
+////        } else {
+////            forConditionNode.setTrueNode(cfgBodyNode);
+////        }
+//        forConditionNode.setFalseNode(cfgEndBlockNode);
+//
+//        cfgEndBlockNode.getBeforeEndBoolNodeList().add(forConditionNode);
+//        cfgEndBlockNode.setBeforeStatementNode(forConditionNode);
+//
+//        // pop from stack to delete finished "for" block
+//        endNodeStack.pop();
+//        conditionNodeStack.pop();
+//
+//        return beginForNode;
+//    }
+
     public static CfgBeginForNode generateCFGFromForASTNode(CfgForStatementBlockNode forCfgNode) {
 //        System.out.println("generateCFGFromForASTNode starts...");
         CfgNode beforeNode = forCfgNode.getBeforeStatementNode();

@@ -14,12 +14,14 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+
 
 import static core.testDriver.Utils.*;
 //import org.slf4j.Logger;
@@ -30,7 +32,7 @@ public class AppStart {
     private static long totalUsedMem = 0;
     private static long tickCount = 0;
 
-    public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InterruptedException {
         String path = "src\\main\\java\\data\\CFG4J_Test.java";
         System.out.println("Start parsing...");
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
@@ -42,6 +44,7 @@ public class AppStart {
 
         for (ASTNode func : funcAstNodeList) {
             if (((MethodDeclaration) func).getName().getIdentifier().equals(methodName)) {
+                createCloneMethod((MethodDeclaration) func);
                 System.out.println("func = " + ((MethodDeclaration) func).getName());
                 List<ASTNode> parameters = ((MethodDeclaration) func).parameters();
                 System.out.println("parameters.size() = " + ((MethodDeclaration) func).parameters().size());

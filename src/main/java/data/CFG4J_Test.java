@@ -1,9 +1,10 @@
 package data;
 
-import core.dataStructure.MarkedPath;
 import core.dataStructure.MarkedPathV2;
 
 import java.util.ArrayList;
+
+import static core.dataStructure.MarkedPath.markOneStatement;
 
 public class CFG4J_Test {
     public CFG4J_Test() {
@@ -246,11 +247,11 @@ public class CFG4J_Test {
         return false;
     }
 
-    private static boolean markV1(String statement, boolean isTrueCondition, boolean isFalseCondition) {
-        MarkedPath.tmpAdd(statement, isTrueCondition, isFalseCondition);
-        if (!isTrueCondition && !isFalseCondition) return true;
-        return !isFalseCondition;
-    }
+//    private static boolean markStatement(String statement, boolean isTrueCondition, boolean isFalseCondition) {
+//        MarkedPath.tmpAdd(statement, isTrueCondition, isFalseCondition);
+//        if (!isTrueCondition && !isFalseCondition) return true;
+//        return !isFalseCondition;
+//    }
 
     private static boolean markV2(String statement) {
         MarkedPathV2.add(statement);
@@ -268,16 +269,16 @@ public class CFG4J_Test {
     }
 
     public static void testSymbolicExecutionCloneV1(int x, int y) {
-        if ((x > 5 && markV1("x > 5", true, false)) || markV1("x > 5", false, true)) {
-            markV1("return;\n", false, false);
+        if ((x > 5 && markOneStatement("x > 5", true, false)) || markOneStatement("x > 5", false, true)) {
+            markOneStatement("return;\n", false, false);
             return;
         }
-        markV1("int i=1", false, false);
-        for (int i = 1; (i < y && markV1("i < y", true, false)) || markV1("i < y", false, true); markV1("i=i + 1", false, false), i = i + 1) {
-            markV1("System.out.println(i);\n", false, false);
+        markOneStatement("int i=1", false, false);
+        for (int i = 1; (i < y && markOneStatement("i < y", true, false)) || markOneStatement("i < y", false, true); markOneStatement("i=i + 1", false, false), i = i + 1) {
+            markOneStatement("System.out.println(i);\n", false, false);
             System.out.println(i);
         }
-        markV1("System.out.println(\"end\");\n", false, false);
+        markOneStatement("System.out.println(\"end\");\n", false, false);
         System.out.println("end");
     }
 
@@ -307,17 +308,17 @@ public class CFG4J_Test {
     }
 
     public static void functionCloneV1(boolean A, boolean B, boolean C, boolean X, boolean Y) {
-        if ((A && markV1("A", true, false)) || markV1("A", false, true)
-                || ((X && markV1("X", true, false)) || markV1("X", false, true))
-                && ((Y && markV1("Y", true, false)) || markV1("Y", false, true))) {
-            markV1("System.out.println(A);\n", false, false);
+        if ((A && markOneStatement("A", true, false)) || markOneStatement("A", false, true)
+                || ((X && markOneStatement("X", true, false)) || markOneStatement("X", false, true))
+                && ((Y && markOneStatement("Y", true, false)) || markOneStatement("Y", false, true))) {
+            markOneStatement("System.out.println(A);\n", false, false);
             System.out.println(A);
         }
-        if ((B && markV1("B", true, false)) || markV1("B", false, true)) {
-            markV1("System.out.println(B);\n", false, false);
+        if ((B && markOneStatement("B", true, false)) || markOneStatement("B", false, true)) {
+            markOneStatement("System.out.println(B);\n", false, false);
             System.out.println(B);
-        } else if ((C && markV1("C", true, false)) || markV1("C", false, true)) {
-            markV1("System.out.println(C);\n", false, false);
+        } else if ((C && markOneStatement("C", true, false)) || markOneStatement("C", false, true)) {
+            markOneStatement("System.out.println(C);\n", false, false);
             System.out.println(C);
         }
     }
@@ -335,43 +336,4 @@ public class CFG4J_Test {
             System.out.println(C);
         }
     }
-
-//    public static void function(boolean A, boolean B, boolean C) {
-//        if (A) {
-//            System.out.println(A);
-//        }
-//        if (B) {
-//            System.out.println(B);
-//        } else if (C) {
-//            System.out.println(C);
-//        }
-//    }
-//
-//    public static void functionCloneV1(boolean A, boolean B, boolean C) {
-//        if ((A && markV1("A", true, false)) || markV1("A", false, true)) {
-//            markV1("System.out.println(A);\n", false, false);
-//            System.out.println(A);
-//        }
-//        if ((B && markV1("B", true, false)) || markV1("B", false, true)) {
-//            markV1("System.out.println(B);\n", false, false);
-//            System.out.println(B);
-//        } else if ((C && markV1("C", true, false)) || markV1("C", false, true)) {
-//            markV1("System.out.println(C);\n", false, false);
-//            System.out.println(C);
-//        }
-//    }
-//
-//    public static void functionCloneV2(boolean A, boolean B, boolean C) {
-//        if (markV2("A") && A) {
-//            markV2("System.out.println(A);\n");
-//            System.out.println(A);
-//        }
-//        if (markV2("B") && B) {
-//            markV2("System.out.println(B);\n");
-//            System.out.println(B);
-//        } else if (markV2("C") && C) {
-//            markV2("System.out.println(C);\n");
-//            System.out.println(C);
-//        }
-//    }
 }
