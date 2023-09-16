@@ -8,6 +8,7 @@ import core.node.Node;
 import core.node.FolderNode;
 import core.utils.Utils;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 
 import java.io.File;
@@ -131,5 +132,17 @@ public class ProjectParser {
         }
 
         return retFuncList;
+    }
+
+    public static CompilationUnit parseFileToCompilationUnit(String filePath) throws IOException {
+        File file = new File(filePath);
+
+        CompilationUnit compilationUnit = null;
+
+        if (file.isFile() && file.getName().endsWith(".java")) {
+            String fileToString = FileService.readFileToString(file.getPath());
+            compilationUnit = CfgNode.parserToCompilationUnit(fileToString);
+        }
+        return compilationUnit;
     }
 }

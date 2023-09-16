@@ -450,6 +450,8 @@ public class ASTHelper {
             }
         }
 
+        if(previousCaseNode != null) previousCaseNode.setFalseNode(cfgEndBlockNode);
+
         endNodeStack.pop();
 
         return beginSwitchNode;

@@ -167,8 +167,6 @@ public class CfgNode
     }
 
 
-
-
     public static ArrayList<ASTNode> parserToAstFuncList(String sourceCodeFile)
     {
         ArrayList<ASTNode> AstFuncList = new ArrayList<>();
@@ -190,6 +188,14 @@ public class CfgNode
         cu.accept(visitor);
 
         return AstFuncList;
+    }
+
+    public static CompilationUnit parserToCompilationUnit(String sourceCode) {
+        ArrayList<ASTNode> AstFuncList = new ArrayList<>();
+        ASTParser parser = ASTParser.newParser(AST.JLS8);
+        parser.setSource(sourceCode.toCharArray());
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        return (CompilationUnit) parser.createAST(null);
     }
     public static ASTNode parserToAstFuncList0(String sourceCodeFile, String funcName)
     {

@@ -1,9 +1,10 @@
 package data;
+import java.util.ArrayList;
 import static core.dataStructure.MarkedPath.markOneStatement;
 public class CloneFile {
 public static void function(boolean A, boolean B, boolean C, boolean X, boolean Y)
 {
-if (((A || X && Y) && markOneStatement("A || X && Y", true, false)) || markOneStatement("A || X && Y", false, true))
+if ((((A) && markOneStatement("A", true, false)) || markOneStatement("A", false, true)) || ((((X) && markOneStatement("X", true, false)) || markOneStatement("X", false, true)) && (((Y) && markOneStatement("Y", true, false)) || markOneStatement("Y", false, true))))
 {
 markOneStatement("System.out.println(A);\n", false, false);
 System.out.println(A);
