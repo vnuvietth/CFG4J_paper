@@ -9,6 +9,7 @@ import core.node.FolderNode;
 import core.utils.Utils;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 
 import java.io.File;
@@ -132,6 +133,20 @@ public class ProjectParser {
         }
 
         return retFuncList;
+    }
+
+    public static List<MethodDeclaration> parseFileToConstructorList(String filePath) throws IOException {
+        File file = new File(filePath);
+
+        List<MethodDeclaration> constructorList = new ArrayList<>();
+
+        if (file.isFile() && file.getName().endsWith(".java")) {
+            String fileToString = FileService.readFileToString(file.getPath());
+
+            constructorList = CfgNode.parserToConstructorList(fileToString);
+        }
+
+        return constructorList;
     }
 
     public static CompilationUnit parseFileToCompilationUnit(String filePath) throws IOException {

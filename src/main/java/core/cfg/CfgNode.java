@@ -190,6 +190,28 @@ public class CfgNode
         return AstFuncList;
     }
 
+    public static List<MethodDeclaration> parserToConstructorList(String sourceCode) {
+        List<MethodDeclaration> constructorList = new ArrayList<>();
+        ASTParser parser = ASTParser.newParser(AST.JLS8);
+        parser.setSource(sourceCode.toCharArray());
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+        ASTVisitor visitor = new ASTVisitor()
+        {
+            @Override
+            public boolean visit(TypeDeclaration node)
+            {
+                Utils.getConstructorChildren(node, constructorList);
+
+                return true;
+            }
+        };
+
+        cu.accept(visitor);
+
+        return constructorList;
+    }
+
     public static CompilationUnit parserToCompilationUnit(String sourceCode) {
         ArrayList<ASTNode> AstFuncList = new ArrayList<>();
         ASTParser parser = ASTParser.newParser(AST.JLS8);

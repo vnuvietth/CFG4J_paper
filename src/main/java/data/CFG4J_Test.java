@@ -5,6 +5,10 @@ public class CFG4J_Test {
     public CFG4J_Test() {
     }
 
+    public CFG4J_Test(int x) {
+        System.out.println(x);
+    }
+
     public static int BinaryPower(int a, int p) {
         int res = 1;
         while (p > 0) {
@@ -261,5 +265,88 @@ public class CFG4J_Test {
         } else if (C) {
             System.out.println(C);
         }
+    }
+
+    public int factorial(int n) {
+        int result = 1;
+        for (int i = 1; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+
+    public static double intPow(double number, int index) {
+        double result = 1;
+        if (index == 0) return 1;
+        else if (index < 0) {
+            for (int i = 0; i < -index; i++) {
+                result *= number;
+            }
+            return 1 / result;
+        } else {
+            for (int i = 0; i < index; i++) {
+                result *= number;
+            }
+            return result;
+        }
+    }
+
+    private boolean leapYear(int year) {
+        if (year % 4 == 0) {
+            if (year % 100 == 0) {
+                if (year % 400 == 0)
+                    return true;
+                else
+                    return false;
+            } else
+                return true;
+        } else
+            return false;
+    }
+
+    public static int abs(int x) {
+        if (x < 0) return -x;
+        else return x;
+    }
+
+    public static boolean isPrime(int n) {
+        if (n <= 1) {
+            return false;
+        }
+
+        for (int i = 2; i <= n / 2; i++) {
+            if (n % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static int fibonacci (int n)
+    {
+        n = n + 1;
+        n = n + 1;
+        int a = 0, b = 1, c, i;
+        if (n == 0)
+            return a;
+        for (i = 2; i <= n; i++) {
+            c = a + b;
+            a = b;
+            b = c;
+        }
+        return b;
+    }
+
+    public boolean isPerfectNumber(int number) {
+        if (number <= 0) {
+            return false;
+        }
+        int sum = 0;
+        for (int i = 1; i < number; i++) {
+            if (number % i == 0) {
+                sum += i;
+            }
+        }
+        return sum == number;
     }
 }

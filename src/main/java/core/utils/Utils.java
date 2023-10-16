@@ -91,9 +91,19 @@ public class Utils {
 
         List<MethodDeclaration> methods = Arrays.asList(((TypeDeclaration) node).getMethods());
         for (MethodDeclaration method : methods) {
-            if (method.isConstructor() == false)
+            if (!method.isConstructor())
             {
                 astFuncList.add(method);
+            }
+        }
+    }
+
+    public static void getConstructorChildren(ASTNode node, List<MethodDeclaration> constructorList) {
+        List<MethodDeclaration> methods = Arrays.asList(((TypeDeclaration) node).getMethods());
+        for (MethodDeclaration method : methods) {
+            if (method.isConstructor())
+            {
+                constructorList.add(method);
             }
         }
     }

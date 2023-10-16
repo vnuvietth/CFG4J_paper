@@ -195,11 +195,11 @@ public final class Utils {
 
     public static void createCloneMethod(MethodDeclaration method, CompilationUnit compilationUnit) {
         StringBuilder cloneMethod = new StringBuilder();
-        cloneMethod.append(compilationUnit.getPackage());
+        cloneMethod.append("package data;");
         for(ASTNode iImport : (List<ASTNode>) compilationUnit.imports()) {
             cloneMethod.append(iImport);
         }
-        cloneMethod.append("import static core.dataStructure.MarkedPath.markOneStatement;\n");
+        cloneMethod.append("import core.dataStructure.MarkedStatement;\n");
         cloneMethod.append("public class CloneFile {\n");
         cloneMethod.append("public static ").append(method.getReturnType2()).append(" ").append(method.getName()).append("(");
         List<ASTNode> parameters = method.parameters();
@@ -254,11 +254,14 @@ public final class Utils {
         StringBuilder result = new StringBuilder();
 
         result.append("if (").append(generateCodeForCondition(ifStatement.getExpression())).append(")\n");
+        result.append("{\n");
         result.append(generateCodeForOneStatement(ifStatement.getThenStatement(), ";"));
+        result.append("}\n");
+
 
         String elseCode = generateCodeForOneStatement(ifStatement.getElseStatement(), ";");
         if (!elseCode.equals("")) {
-            result.append("else ").append(elseCode);
+            result.append("else {\n").append(elseCode).append("}\n");
         }
 
         return result.toString();
@@ -291,8 +294,9 @@ public final class Utils {
         }
 
         // Body
-        result.append(") ");
+        result.append(") {\n");
         result.append(generateCodeForOneStatement(forStatement.getBody(), ";"));
+        result.append("}\n");
 
         return result.toString();
     }
@@ -303,9 +307,10 @@ public final class Utils {
         // Condition
         result.append("while (");
         result.append(generateCodeForCondition(whileStatement.getExpression()));
-        result.append(") ");
+        result.append(") {\n");
 
         result.append(generateCodeForOneStatement(whileStatement.getBody(), ";"));
+        result.append("}\n");
 
         return result.toString();
     }
@@ -314,8 +319,9 @@ public final class Utils {
         StringBuilder result = new StringBuilder();
 
         // Do body
-        result.append("do ");
+        result.append("do {");
         result.append(generateCodeForOneStatement(doStatement.getBody(), ";"));
+        result.append("}\n");
 
         // Condition
         result.append("while (");
@@ -359,7 +365,7 @@ public final class Utils {
             newStatement.append(charAt);
         }
 
-        result.append("markOneStatement(\"").append(newStatement).append("\", false, false)").append(markMethodSeparator).append("\n");
+        result.append("MarkedStatement.markOneStatement(\"").append(newStatement).append("\", false, false)").append(markMethodSeparator).append("\n");
 
         return result.toString();
     }
@@ -379,8 +385,8 @@ public final class Utils {
                 result.append("(").append(generateCodeForCondition((Expression) operand)).append(")");
             }
         } else {
-            result.append("((").append(condition).append(") && markOneStatement(\"").append(condition).append("\", true, false))");
-            result.append(" || markOneStatement(\"").append(condition).append("\", false, true)");
+            result.append("((").append(condition).append(") && MarkedStatement.markOneStatement(\"").append(condition).append("\", true, false))");
+            result.append(" || MarkedStatement.markOneStatement(\"").append(condition).append("\", false, true)");
         }
 
         return result.toString();

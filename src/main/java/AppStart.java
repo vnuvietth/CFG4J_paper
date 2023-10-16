@@ -17,8 +17,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -33,18 +32,17 @@ import static core.testDriver.Utils.*;
 //import org.slf4j.LoggerFactory;
 
 public class AppStart {
-    //    private static final Logger LOGGER = LoggerFactory.getLogger(CppApi.class);
-    private static long totalUsedMem = 0;
-    private static long tickCount = 0;
 
-    public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InterruptedException {
         String path = "src\\main\\java\\data\\CFG4J_Test.java";
 
         // Parse File
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
         CompilationUnit compilationUnit = ProjectParser.parseFileToCompilationUnit(path);
 
-        String methodName = "function";
+        List<MethodDeclaration> constructor = ProjectParser.parseFileToConstructorList(path);
+
+        String methodName = "fibonacci";
         String className = "data.CloneFile";
 
         for (ASTNode func : funcAstNodeList) {
@@ -56,7 +54,7 @@ public class AppStart {
 
                 // Re-compile cloned file
                 JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-                int compilationResult = compiler.run(null, null, null, "D:\\CFG4J_paper\\src\\main\\java\\data\\CloneFile.java");
+                int compilationResult = compiler.run(null, null, null, "src\\main\\java\\data\\CloneFile.java");
                 if (compilationResult == 0) {
                     System.out.println("Compilation is successful.");
                 } else {
@@ -82,6 +80,10 @@ public class AppStart {
                 } catch (IOException e) {
                     throw new RuntimeException(e.getMessage());
                 }
+
+                ProcessBuilder builder = new ProcessBuilder("javac", "src\\main\\java\\data\\CloneFile.data");
+                Process abc = builder.start();
+                System.out.println(abc.waitFor());
 
                 // Generate CFG
                 Block functionBlock = Utils.getFunctionBlock(func);
@@ -114,7 +116,8 @@ public class AppStart {
 
                 beforeTime = LocalDateTime.now();
 
-                method.invoke(parameterClasses, createRandomTestData(parameterClasses));
+                Object[] parameterValue = createRandomTestData(parameterClasses);
+                method.invoke(parameterClasses, parameterValue);
                 MarkedPath.markPathToCFG(cfgNode);
 
                 afterTime = LocalDateTime.now();
