@@ -141,11 +141,12 @@ public class InfixExpressionNode extends OperationExpressionNode {
                 infixExpressionNode.rightOperand = OperationExpressionNode.executeOperandNode(rightOperand, memoryModel);
             }
 
-            if (oldLeftOperand != infixExpressionNode.leftOperand || oldRightOperand != infixExpressionNode.rightOperand) {
-                return executeInfixExpressionNode(infixExpressionNode, memoryModel);
-            } else {
-                return infixExpressionNode;
-            }
+//            if (oldLeftOperand != infixExpressionNode.leftOperand || oldRightOperand != infixExpressionNode.rightOperand) {
+//                return executeInfixExpressionNode(infixExpressionNode, memoryModel);
+//            } else {
+//                return infixExpressionNode;
+//            }
+            return infixExpressionNode;
         }
     }
 

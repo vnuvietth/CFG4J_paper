@@ -6,11 +6,6 @@ public class CfgForEachExpressionNode extends CfgNode
 {
     public CfgForEachExpressionNode(){}
 
-    public CfgForEachExpressionNode(ASTNode astNode)
-    {
-        this.setAst(astNode);
-    }
-
     private CfgNode hasElementAfterNode = null;
     private CfgNode noMoreElementAfterNode = null;
     private CfgNode parameterNode = null;

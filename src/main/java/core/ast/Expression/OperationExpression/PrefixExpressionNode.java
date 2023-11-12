@@ -77,11 +77,12 @@ public class PrefixExpressionNode extends OperationExpressionNode {
             // END RE-ASSIGN
 
             // CONTINUE executing
-            if(oldOperand != prefixExpressionNode.operand) {
-                return PrefixExpressionNode.executePrefixExpressionNode(prefixExpressionNode, memoryModel);
-            } else {
-                return prefixExpressionNode;
-            }
+//            if(oldOperand != prefixExpressionNode.operand) {
+//                return PrefixExpressionNode.executePrefixExpressionNode(prefixExpressionNode, memoryModel);
+//            } else {
+//                return prefixExpressionNode;
+//            }
+            return prefixExpressionNode;
         }
     }
 

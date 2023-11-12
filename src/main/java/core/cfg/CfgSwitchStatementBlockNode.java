@@ -7,10 +7,6 @@ import org.eclipse.jdt.core.dom.IfStatement;
 public class CfgSwitchStatementBlockNode extends CfgNode implements IEvaluateCoverage {
     public CfgSwitchStatementBlockNode() {}
 
-    public CfgSwitchStatementBlockNode(ASTNode astNode) {
-        this.setAst(astNode);
-    }
-
     @Override
     public String markContent(String testPath) {
         StringBuilder content = new StringBuilder("");

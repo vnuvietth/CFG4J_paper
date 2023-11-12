@@ -8,11 +8,6 @@ public class CfgWhileStatementBlockNode extends CfgNode  implements IEvaluateCov
 {
     public CfgWhileStatementBlockNode(){}
 
-    public CfgWhileStatementBlockNode(ASTNode astNode)
-    {
-        this.setAst(astNode);
-    }
-
     @Override
     public String markContent(String testPath) {
         StringBuilder content = new StringBuilder("");

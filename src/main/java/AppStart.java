@@ -40,8 +40,6 @@ public class AppStart {
         ArrayList<ASTNode> funcAstNodeList = ProjectParser.parseFile(path);
         CompilationUnit compilationUnit = ProjectParser.parseFileToCompilationUnit(path);
 
-        List<MethodDeclaration> constructor = ProjectParser.parseFileToConstructorList(path);
-
         String methodName = "fibonacci";
         String className = "data.CloneFile";
 
@@ -97,10 +95,13 @@ public class AppStart {
                 CfgNode block = new CfgBlockNode();
                 block.setAst(functionBlock);
 
+                int firstLine = compilationUnit.getLineNumber(functionBlock.getStartPosition());
+                block.setLineNumber(1);
+
                 block.setBeforeStatementNode(cfgBeginCfgNode);
                 block.setAfterStatementNode(cfgEndCfgNode);
 
-                ASTHelper.generateCFG(block);
+                ASTHelper.generateCFG(block, compilationUnit, firstLine);
                 CfgNode cfgNode = cfgBeginCfgNode;
                 //===========================
 

@@ -37,11 +37,12 @@ public class ParenthesizedExpressionNode extends OperationExpressionNode {
 
             parenthesizedExpressionNode.expression = OperationExpressionNode.executeOperandNode(expression, memoryModel);
 
-            if(oldExpression != parenthesizedExpressionNode.expression) {
-                return ParenthesizedExpressionNode.executeParenthesizedExpressionNode(parenthesizedExpressionNode, memoryModel);
-            } else {
-                return parenthesizedExpressionNode;
-            }
+//            if(oldExpression != parenthesizedExpressionNode.expression) {
+//                return ParenthesizedExpressionNode.executeParenthesizedExpressionNode(parenthesizedExpressionNode, memoryModel);
+//            } else {
+//                return parenthesizedExpressionNode;
+//            }
+            return parenthesizedExpressionNode;
         }
     }
 

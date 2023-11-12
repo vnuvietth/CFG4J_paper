@@ -3,10 +3,6 @@ import core.dataStructure.MarkedStatement;
 public class CloneFile {
 public static int fibonacci(int n)
 {
-MarkedStatement.markOneStatement("n=n + 1;\n", false, false);
-n=n + 1;
-MarkedStatement.markOneStatement("n=n + 1;\n", false, false);
-n=n + 1;
 MarkedStatement.markOneStatement("int a=0, b=1, c, i;\n", false, false);
 int a=0, b=1, c, i;
 if (((n == 0) && MarkedStatement.markOneStatement("n == 0", true, false)) || MarkedStatement.markOneStatement("n == 0", false, true))

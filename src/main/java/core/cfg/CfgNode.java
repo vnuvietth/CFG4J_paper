@@ -14,6 +14,8 @@ public class CfgNode
     private int startPosition;
     private int endPosition;
 
+    private int lineNumber;
+
     private CfgNode beforeStatementNode;//Lenh ngay truoc
     private CfgNode afterStatementNode;//Lenh ngay sau
     private boolean isBeginCfgNode = false; //Nut dau CFG (nút giả)
@@ -24,6 +26,8 @@ public class CfgNode
     private String content = "";
 
     private boolean isMarked = false;
+
+    private ASTNode ast;
 
     public CfgNode(ASTNode ast)
     {
@@ -48,7 +52,13 @@ public class CfgNode
         this.content = ast.toString();
     }
 
-    private ASTNode ast;
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
 
     public int getStartPosition()
     {

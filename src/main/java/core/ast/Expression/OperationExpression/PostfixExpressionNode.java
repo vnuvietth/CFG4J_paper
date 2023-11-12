@@ -61,11 +61,12 @@ public class PostfixExpressionNode extends OperationExpressionNode {
         }
 
         // CONTINUE executing
-        if(oldOperand != postfixExpressionNode.operand) {
-            return executePostfixExpressionNode(postfixExpressionNode, memoryModel);
-        } else {
-            return postfixExpressionNode;
-        }
+//        if(oldOperand != postfixExpressionNode.operand) {
+//            return executePostfixExpressionNode(postfixExpressionNode, memoryModel);
+//        } else {
+//            return postfixExpressionNode;
+//        }
+        return postfixExpressionNode;
     }
 
     @Override

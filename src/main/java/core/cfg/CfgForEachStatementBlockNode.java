@@ -8,11 +8,6 @@ public class CfgForEachStatementBlockNode extends CfgNode implements IEvaluateCo
 {
     public CfgForEachStatementBlockNode(){}
 
-    public CfgForEachStatementBlockNode(ASTNode astNode)
-    {
-        this.setAst(astNode);
-    }
-
     @Override
     public String markContent(String testPath) {
         StringBuilder content = new StringBuilder("");

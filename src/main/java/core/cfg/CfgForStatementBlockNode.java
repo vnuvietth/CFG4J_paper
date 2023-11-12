@@ -8,11 +8,6 @@ public class CfgForStatementBlockNode  extends CfgNode implements IEvaluateCover
 {
     public CfgForStatementBlockNode(){}
 
-    public CfgForStatementBlockNode(ASTNode astNode)
-    {
-        this.setAst(astNode);
-    }
-
     @Override
     public String markContent(String testPath) {
         StringBuilder content = new StringBuilder("");

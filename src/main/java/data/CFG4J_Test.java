@@ -324,8 +324,6 @@ public class CFG4J_Test {
 
     public static int fibonacci (int n)
     {
-        n = n + 1;
-        n = n + 1;
         int a = 0, b = 1, c, i;
         if (n == 0)
             return a;
